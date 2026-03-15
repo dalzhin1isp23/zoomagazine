@@ -4,12 +4,15 @@ import { Heart, ShoppingCart } from 'lucide-react';
 const ProductCard = ({ product }) => {
   return (
     <div className="modern-offer-card">
-     
+      {/* Скидка теперь вне контейнера картинки */}
+      <div className="discount-badge">{product.discount}</div>
+      
+      {/* Сердце привязано к углу всей карточки */}
+      <button className="wishlist-btn-top">
+          <Heart size={24} fill="white" color="white" strokeWidth={1.5} />
+      </button>
+
       <div className="offer-img-container">
-        <div className="discount-badge">{product.discount}</div>
-        <button className="wishlist-btn-top">
-          <Heart size={24} fill="#71b280" strokeWidth={1.5} />
-        </button>
         <img src={product.img} alt={product.title} />
       </div>
 
@@ -21,13 +24,8 @@ const ProductCard = ({ product }) => {
             <span className="old-price">{product.oldPrice}₽</span>
             <span className="current-price">{product.price}₽</span>
           </div>
-          <button style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: '#71b280', 
-            cursor: 'pointer' 
-          }}>
-            <ShoppingCart size={24} />
+          <button className="cart-btn-small">
+            <ShoppingCart size={20} />
           </button>
         </div>
       </div>

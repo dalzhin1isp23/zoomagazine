@@ -77,10 +77,9 @@ body {
 .modern-offer-card {
   background: white;
   border-radius: 28px;
-  padding: 16px;
   position: relative;
   transition: all 0.3s ease;
-  border: 1px solid #f0fdf4;
+  
 }
 
 .modern-offer-card:hover {
@@ -168,33 +167,22 @@ body {
   color: white;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-/* Основной контейнер карточки */
-.modern-offer-card {
-  background-color: #71b280; /* Твой фирменный зеленый */
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  border: none;
-  transition: transform 0.3s ease;
-}
 
 .modern-offer-card:hover {
   transform: translateY(-5px);
 }
 
-/* Белая подложка для фото с характерным изгибом */
+
 .offer-img-container {
   background-color: white;
-  margin: 8px;
-  border-radius: 15px 15px 50px 15px; /* Имитация изгиба из макета */
+  margin: 10px 5px;
+  border-radius: 15px 15px 50px 15px; 
   height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+
 }
 
 .offer-img-container img {
@@ -1100,3 +1088,4 @@ body {
   color: #333;
   font-weight: bold;
 }
+

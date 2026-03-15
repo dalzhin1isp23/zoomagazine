@@ -3,7 +3,9 @@ import Ogama_pic from "./image/ogamabann.png"
 const About = () => {
   return (
     <section className="section" style={{ backgroundColor: '#fff' }}>
+    
       <div className="container">
+          <h2 className="section-title"> О нас</h2>
         <div className="about">
           <div className="about-img">
             <img 
