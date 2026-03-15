@@ -1,0 +1,129 @@
+/* Карточка товара - основной контейнер */
+.modern-offer-card {
+  background-color: #71b280;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border: none;
+  width: 250px;
+  height: 400px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.modern-offer-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Контейнер изображения */
+.offer-img-container {
+  background-color: white;
+  padding: 0;
+  border-radius: 15px 100px 15px 15px;
+  height: 300px;
+  width: 240px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 10px 5px;
+}
+
+.offer-img-container img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+/* Бейдж скидки */
+.discount-badge {
+  position: absolute;
+  top: 40px;
+  right: -5px;
+  background-color: #ffd700;
+  color: #333;
+  padding: 4px 12px;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 5px 0 0 5px;
+  box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+/* Нижняя часть с информацией */
+.offer-info-bottom {
+  padding: 12px;
+  color: white;
+}
+
+.offer-title-white {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: white;
+}
+
+/* Контейнер цены */
+.price-container-white {
+  background: white;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.current-price {
+  color: #333;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+/* Кнопка "В избранное" */
+.wishlist-btn-top {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #71b280;
+  cursor: pointer;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.wishlist-btn-top:hover {
+  transform: scale(1.1);
+}
+
+/* Кнопка корзины */
+.cart-btn-small {
+  background: none;
+  border: none;
+  color: #71b280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.cart-btn-small:hover {
+  background: rgba(113, 178, 128, 0.1);
+}
