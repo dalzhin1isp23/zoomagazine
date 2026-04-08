@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../../entity/Header';
+import Header from '../../entity/Header_lizard';
 import Reklama from '../../entity/Reklama';
 import Categories from './section/Catigories';
 import Offers from './section/Offers';

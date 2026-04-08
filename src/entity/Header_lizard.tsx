@@ -35,6 +35,31 @@ const HeaderLizard: React.FC = () => {
           </div>
         </div>
       </header>
+
+      <section className="hero-lizard">
+        <div className="hero-logo-container">
+          <h1 className="hero-logo-text">
+            <div className="logo-circle-icon"></div>
+            <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>ГАМА</Link>
+          </h1>
+        </div>
+
+        <nav className="hero-nav">
+          <Link to="/catalog?category=reptiles" className="hero-nav-btn">Рептилии</Link>
+          <Link to="/catalog?category=accessories" className="hero-nav-btn">Аксессуары</Link>
+          <Link to="/catalog?category=medicine" className="hero-nav-btn">Лекарства</Link>
+          <Link to="/catalog?category=food" className="hero-nav-btn">Корма</Link>
+        </nav>
+
+        <div className="hero-search-wrapper">
+          <input 
+            type="text" 
+            className="hero-search-input" 
+            placeholder="Поиск по товарам..." 
+          />
+          <Search className="hero-search-icon" size={20} />
+        </div>
+      </section>
     </>
   );
 };
