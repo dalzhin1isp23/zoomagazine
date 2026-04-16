@@ -1,17 +1,25 @@
 import React from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { Product } from '../../types';
 import { Link } from 'react-router-dom';
+import { ProductData } from '../../function/products/filtration/types';
 import "./style/ProductCards.css";
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductData;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const mainImage = product.images?.find(img => img.isMain)?.url || product.images?.[0]?.url || '';
+  
+  const discountedPrice = product.discount && product.discount > 0
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : null;
+
   return (
-    <Link to={`/product/${product.id}`} className="modern-offer-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-      {product.discount && <div className="discount-badge">{product.discount}</div>}
+    <Link to={`/product/${product._id}`} className="modern-offer-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+      {product.discount && product.discount > 0 && (
+        <div className="discount-badge">-{product.discount}%</div>
+      )}
       
       <button 
         className="wishlist-btn-top"
@@ -24,16 +32,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </button>
 
       <div className="offer-img-container">
-        <img src={product.img} alt={product.title} />
+        <img src={mainImage} alt={product.name} />
       </div>
 
       <div className="offer-info-bottom">
-        <h3 className="offer-title-white">{product.title}</h3>
+        <h3 className="offer-title-white">{product.name}</h3>
         
         <div className="price-container-white">
           <div>
-            {product.oldPrice && <span className="old-price">{product.oldPrice}₽</span>}
-            <span className="current-price">{product.price}₽</span>
+            {discountedPrice && (
+              <span className="old-price">{product.price}₽</span>
+            )}
+            <span className="current-price">{discountedPrice || product.price}₽</span>
           </div>
           <button 
             className="cart-btn-small"
