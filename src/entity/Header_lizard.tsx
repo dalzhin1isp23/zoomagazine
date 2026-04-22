@@ -1,9 +1,44 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { ChangeEvent, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingBag, User } from 'lucide-react';
 import "./style/Header.css";
 
 const HeaderLizard: React.FC = () => {
+  const navigate = useNavigate();
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const categoryLinks = [
+    { name: 'Корма', path: '/catalog?type=Корма' },
+    { name: 'Ветеринария', path: '/catalog?type=Ветеринария' },
+    { name: 'Игрушки', path: '/catalog?type=Игрушки' },
+    { name: 'Аксессуары', path: '/catalog?type=Аксессуары' },
+    { name: 'Лакомства', path: '/catalog?type=Лакомства' },
+  ];
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      if (value.trim()) {
+        navigate(`/catalog?search=${encodeURIComponent(value)}`);
+      } else {
+        navigate('/catalog');
+      }
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
       <header className="header">
@@ -14,16 +49,20 @@ const HeaderLizard: React.FC = () => {
           </div>
           
           <nav className="nav">
-            <Link to="/catalog?category=reptiles">Рептилии</Link>
-            <Link to="/catalog?category=accessories">Аксессуары</Link>
-            <Link to="/catalog?category=medicine">Лекарства</Link>
-            <Link to="/catalog?category=food">Корма</Link>
+            {categoryLinks.map(link => (
+              <Link key={link.name} to={link.path}>{link.name}</Link>
+            ))}
           </nav>
 
           <div className="header-actions">
             <div className="search-container">
               <Search className="search-icon" size={18} />
-              <input type="text" className="search-input" placeholder="Поиск..." />
+              <input 
+                type="text" 
+                className="search-input" 
+                placeholder="Поиск..." 
+                onChange={handleSearchChange}
+              />
             </div>
             <Link to="/profile" className="header-btn">
               <User size={20} />
@@ -45,10 +84,9 @@ const HeaderLizard: React.FC = () => {
         </div>
 
         <nav className="hero-nav">
-          <Link to="/catalog?category=reptiles" className="hero-nav-btn">Рептилии</Link>
-          <Link to="/catalog?category=accessories" className="hero-nav-btn">Аксессуары</Link>
-          <Link to="/catalog?category=medicine" className="hero-nav-btn">Лекарства</Link>
-          <Link to="/catalog?category=food" className="hero-nav-btn">Корма</Link>
+          {categoryLinks.map(link => (
+            <Link key={`hero-${link.name}`} to={link.path} className="hero-nav-btn">{link.name}</Link>
+          ))}
         </nav>
 
         <div className="hero-search-wrapper">
@@ -56,6 +94,7 @@ const HeaderLizard: React.FC = () => {
             type="text" 
             className="hero-search-input" 
             placeholder="Поиск по товарам..." 
+            onChange={handleSearchChange}
           />
           <Search className="hero-search-icon" size={20} />
         </div>

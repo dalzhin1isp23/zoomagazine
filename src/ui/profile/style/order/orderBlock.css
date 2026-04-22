@@ -1,0 +1,127 @@
+@import './order.css';
+
+.order-block {
+  border: 1px solid var(--color-bg-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg-white);
+  transition: box-shadow var(--transition-fast);
+  margin-top: 15px;
+}
+
+.order-block:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.order-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--color-bg-light);
+  border-bottom: 1px solid var(--color-bg-border);
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-id {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-size: 16px;
+}
+
+.order-dates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.date-separator {
+  opacity: 0.5;
+}
+
+.order-status-badge {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-full);
+}
+
+.order-items-list {
+  padding: 8px 0;
+}
+
+.order-block-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-bg-border);
+  background: var(--color-bg-light);
+}
+
+.order-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.order-block-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-order-secondary, .btn-order-primary {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.btn-order-secondary {
+  background: var(--color-bg-white);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-bg-border);
+}
+
+.btn-order-secondary:hover {
+  background: var(--color-bg-lighter);
+}
+
+.btn-order-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-order-primary:hover {
+  background: var(--color-primary-dark);
+}
+
+@media (max-width: 768px) {
+  .order-block-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .order-block-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .order-block-actions {
+    width: 100%;
+  }
+  .btn-order-secondary, .btn-order-primary {
+    flex: 1;
+  }
+}

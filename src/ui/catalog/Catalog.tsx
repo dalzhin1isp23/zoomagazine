@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
 import ProductCard from '../../entity/ProductCards';
@@ -6,11 +7,18 @@ import { Filter, Grid, List } from 'lucide-react';
 import { ViewMode, ProductData, SortOption } from '../../function/products/filtration/types';
 import { useProducts } from '../../function/products/useProducts';
 import { useCategories } from '../../function/products/useCategories';
-import { useTypes } from '../../function/products/useTipes';
+import { useTypes } from '../../function/products/useTypes';
 import "./style/style.css";
 
 const Catalog: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isUrlSync, setIsUrlSync] = useState(false);
+
+  const initialCategory = searchParams.get('category') || undefined;
+  const initialType = searchParams.get('type') || undefined;
+  const initialSearch = searchParams.get('search') || undefined;
+  const initialSort = (searchParams.get('sort') as SortOption) || 'popularity';
 
   const {
     products,
@@ -26,21 +34,70 @@ const Catalog: React.FC = () => {
     refetch
   } = useProducts({
     initialLimit: 9,
-    initialSort: 'popularity',
-    autoFetch: true
+    initialSort: initialSort,
+    autoFetch: true,
+    initialFilters: {
+      category: initialCategory,
+      type: initialType,
+      search: initialSearch
+    }
   });
 
   const { categories: categoryList, isLoading: categoriesLoading } = useCategories();
   const { types: typeList, isLoading: typesLoading } = useTypes();
 
+  useEffect(() => {
+    const urlCategory = searchParams.get('category');
+    const urlType = searchParams.get('type');
+    const urlSearch = searchParams.get('search');
+    const urlSort = searchParams.get('sort') as SortOption;
+
+    const normalizeToDbName = (param: string | null, list: { name: string }[]) => {
+      if (!param || list.length === 0) return param || undefined;
+      const lowerParam = param.toLowerCase();
+      const match = list.find(item => item.name.toLowerCase() === lowerParam);
+      return match ? match.name : param;
+    };
+
+    setIsUrlSync(true);
+    setFilters({
+      category: normalizeToDbName(urlCategory, categoryList),
+      type: normalizeToDbName(urlType, typeList),
+      search: urlSearch || undefined
+    });
+
+    if (urlSort && urlSort !== sort) {
+      setSort(urlSort);
+    }
+
+    const pageParam = searchParams.get('page');
+    if (pageParam && !isNaN(Number(pageParam))) {
+      setPage(Number(pageParam));
+    }
+  }, [searchParams.toString(), categoryList, typeList]);
+
+  useEffect(() => {
+    if (isUrlSync) {
+      setIsUrlSync(false);
+      return;
+    }
+    
+    const params: Record<string, string> = {};
+    if (filters.category) params.category = filters.category;
+    if (filters.type) params.type = filters.type;
+    if (filters.search) params.search = filters.search;
+    if (sort && sort !== 'popularity') params.sort = sort;
+    if (pagination.page > 1) params.page = String(pagination.page);
+    
+    setSearchParams(params, { replace: true });
+  }, [filters.category, filters.type, filters.search, sort, pagination.page, setSearchParams, isUrlSync]);
+
   const paginationButtons = useMemo(() => {
     const { totalPages, page } = pagination;
     if (totalPages <= 1) return [];
-
     const buttons: (number | '...')[] = [];
     const start = Math.max(1, page - 2);
     const end = Math.min(totalPages, page + 2);
-
     if (start > 1) { buttons.push(1); if (start > 2) buttons.push('...'); }
     for (let i = start; i <= end; i++) buttons.push(i);
     if (end < totalPages) { if (end < totalPages - 1) buttons.push('...'); buttons.push(totalPages); }
@@ -63,6 +120,13 @@ const Catalog: React.FC = () => {
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) =>
     setFilters({ search: e.target.value || undefined });
+
+  const findMatchingValue = (urlValue: string | undefined, list: { name: string }[]) => {
+    if (!urlValue || list.length === 0) return urlValue || '';
+    const lowerParam = urlValue.toLowerCase();
+    const match = list.find(item => item.name.toLowerCase() === lowerParam);
+    return match ? match.name : urlValue;
+  };
 
   return (
     <>
@@ -113,7 +177,7 @@ const Catalog: React.FC = () => {
                   <label className="filter-label">Категория</label>
                   <select
                     className="filter-select"
-                    value={filters.category || ''}
+                    value={findMatchingValue(filters.category, categoryList) || filters.category || ''}
                     onChange={handleCategoryChange}
                     disabled={isLoading || categoriesLoading}
                   >
@@ -130,7 +194,7 @@ const Catalog: React.FC = () => {
                   <label className="filter-label">Тип</label>
                   <select
                     className="filter-select"
-                    value={filters.type || ''}
+                    value={findMatchingValue(filters.type, typeList) || filters.type || ''}
                     onChange={handleTypeChange}
                     disabled={isLoading || typesLoading}
                   >
@@ -253,7 +317,7 @@ const Catalog: React.FC = () => {
                   ))
                 ) : (
                   <div className="no-results">
-                    <p>🔍 Товары не найдены</p>
+                    <p>Товары не найдены</p>
                     <button onClick={reset} className="reset-filters-btn">
                       Сбросить фильтры
                     </button>

@@ -1,4 +1,4 @@
-/* Карточка товара - основной контейнер */
+
 .modern-offer-card {
   background-color: #71b280;
   border-radius: 20px;
@@ -8,6 +8,7 @@
   border: none;
   width: 250px;
   height: 400px;
+  margin: 5px;
   transition: transform 0.3s ease;
   cursor: pointer;
 }
@@ -52,7 +53,7 @@
   z-index: 2;
 }
 
-/* Нижняя часть с информацией */
+
 .offer-info-bottom {
   padding: 12px;
   color: white;
@@ -90,7 +91,7 @@
   font-weight: 900;
 }
 
-/* Кнопка "В избранное" */
+
 .wishlist-btn-top {
   position: absolute;
   top: 10px;
@@ -110,7 +111,6 @@
   transform: scale(1.1);
 }
 
-/* Кнопка корзины */
 .cart-btn-small {
   background: none;
   border: none;

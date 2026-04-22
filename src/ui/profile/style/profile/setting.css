@@ -1,0 +1,90 @@
+@import '../style.css';
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toggle-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-bg-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.toggle-label:hover {
+  background: var(--color-bg-border);
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 40px;
+  height: 22px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.hint {
+  display: block;
+  color: var(--color-text-light);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.readonly-input {
+  background: var(--color-bg-light);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.save-btn {
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.save-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.save-btn:disabled {
+  background: var(--color-text-light);
+  cursor: not-allowed;
+}
+
+.change-password-btn {
+  padding: 12px 24px;
+  background: white;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-bg-border);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.change-password-btn:hover {
+  background: var(--color-bg-light);
+}

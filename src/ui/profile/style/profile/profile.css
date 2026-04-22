@@ -1,0 +1,126 @@
+@import '../style.css';
+
+.profile-page {
+  padding: 40px 0;
+  min-height: 100vh;
+  background: var(--color-bg-lighter);
+}
+
+.profile-content {
+  display: flex;
+  gap: 32px;
+}
+
+.profile-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.profile-main {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.profile-user-card {
+  background: var(--color-bg-white);
+  padding: 32px 24px;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  background: #f0fdf4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: var(--color-primary);
+}
+
+.profile-user-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.profile-user-card p {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.user-phone {
+  margin-top: 4px;
+}
+
+
+.profile-nav {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+  font-size: 15px;
+}
+
+.nav-item:hover {
+  background: var(--color-bg-light);
+}
+
+.nav-item.active {
+  background: #f0fdf4;
+  color: var(--color-primary);
+}
+
+.nav-item.logout {
+  color: #ef4444;
+  margin-top: 8px;
+  border-top: 1px solid var(--color-bg-border);
+}
+
+.nav-item.logout:hover {
+  background: #fee2e2;
+}
+
+.tab-content {
+  background: var(--color-bg-white);
+  padding: 32px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+
+@media (max-width: 768px) {
+  .profile-content {
+    flex-direction: column;
+  }
+  
+  .profile-sidebar {
+    width: 100%;
+  }
+  
+  .tab-content {
+    padding: 20px;
+  }
+}

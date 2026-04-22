@@ -1,0 +1,106 @@
+@import '../style.css';
+
+.pet-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pet-form .form-section {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-bg-border);
+}
+
+.pet-form .form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 30px;
+  border: 2px dashed var(--color-bg-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-muted);
+}
+
+.upload-label:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #f0fdf4;
+}
+
+.upload-label input {
+  display: none;
+}
+
+.file-name {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.tags-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-btn {
+  padding: 6px 14px;
+  border: 2px solid var(--color-bg-border);
+  border-radius: var(--radius-full);
+  background: white;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag-btn:hover,
+.tag-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+  background: white;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-bg-border);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.cancel-btn:hover {
+  background: var(--color-bg-light);
+}
+
+.form-error {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  font-size: 14px;
+}

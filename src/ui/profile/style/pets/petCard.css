@@ -1,0 +1,118 @@
+@import '../style.css';
+
+.pet-folder {
+  position: relative;
+  width: 300px;
+  max-width: 220px;
+  height: 280px;
+  background: var(--color-secondary);
+  border-radius: 15px 4px 4px 15px;
+  padding: 10px 0px 10px 10px;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-lg);
+  margin: 10px;
+}
+
+.pet-folder:hover {
+  transform: translateY(-5px);
+  box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.folder-panel {
+    height:100%;
+    float:right;
+    width: 10px;
+    border-radius: 2px;
+    background-color: #333333;
+}
+
+.folder-paper {
+  background: white;
+  width: 90%;
+  float: right;
+  height: 100%;
+  padding: 20px 10px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  position: relative;
+}
+
+.pet-avatar-circle {
+  width: 90px;
+  height: 90px;
+  background: var(--color-bg-lighter);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.pet-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-icon {
+  color: var(--color-text-light);
+}
+
+.pet-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 4px 0 2px;
+  text-align: center;
+}
+
+.pet-species {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.pet-age {
+  font-size: 13px;
+  color: var(--color-text-light);
+  margin: 4px 0 0;
+}
+
+.edit-btn-red {
+  background: var(--color-danger-light);
+  border: none;
+  border-radius:100%;
+  padding: 5px;
+  height: 30px;
+  width: 30px;
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  
+  transition: background var(--transition-fast);
+}
+
+.edit-btn-red:hover {
+  background: #fecaca;
+}
+
+.edit-btn-red.smaller-pencil {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px;
+}
+
+@media (max-width: 768px) {
+  .pet-folder {
+    height: 240px;
+  }
+}
