@@ -3,7 +3,7 @@ import { Heart, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ProductData } from '../function/products/filtration/types';
 import "./style/ProductCards.css";
-
+import whiskas from './image/whiskas.jpg';
 interface ProductCardProps {
   product: ProductData;
 }
@@ -32,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </button>
 
       <div className="offer-img-container">
-        <img src={mainImage} alt={product.name} />
+        <img src={whiskas} alt={product.name} />
       </div>
 
       <div className="offer-info-bottom">

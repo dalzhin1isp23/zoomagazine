@@ -1,6 +1,9 @@
 import React from 'react';
 import { Pencil, User } from 'lucide-react';
-import "../../style/pets/petCard.css"
+import "../../style/pets/petCard.css";
+
+const API_BASE_URL = 'http://127.0.0.1:3000';
+
 export interface PetCardData {
   _id: string;
   name: string;
@@ -9,6 +12,7 @@ export interface PetCardData {
   photoUrl?: string;
   ageYears?: number;
   gender?: 'Мальчик' | 'Девочка';
+  folderColor?: string; // ← добавили поле
 }
 
 export interface petProfileCardProps {
@@ -17,11 +21,13 @@ export interface petProfileCardProps {
   onEdit?: () => void;
 }
 
-const petProfileCard: React.FC<petProfileCardProps> = ({ 
+const PetFolderCard: React.FC<petProfileCardProps> = ({ 
   pet, 
   onClick = () => {}, 
   onEdit 
 }) => {
+  const folderColor = pet.folderColor || '#234cd3';
+
   const getAgeText = () => {
     if (pet.ageYears !== undefined && pet.ageYears > 0) {
       return `${pet.ageYears} ${pet.ageYears === 1 ? 'год' : pet.ageYears < 5 ? 'года' : 'лет'}`;
@@ -29,20 +35,37 @@ const petProfileCard: React.FC<petProfileCardProps> = ({
     return 'Возраст не указан';
   };
 
+  const getImageUrl = (url?: string) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${API_BASE_URL}${url}`;
+  };
+
   return (
-    <div className="pet-folder" onClick={onClick}>
-      <div className="folder-panel"></div>
+    <div 
+      className="pet-folder" 
+      onClick={onClick}
+      style={{ backgroundColor: folderColor } as React.CSSProperties}
+    >
+      <div 
+        className="folder-panel" 
+      />
       <div className="folder-paper">
-        <div className="pet-avatar-circle">
+        <div 
+          className="pet-avatar-circle"
+        >
           {pet.photoUrl ? (
             <img 
-              src={pet.photoUrl} 
+              src={getImageUrl(pet.photoUrl)} 
               alt={pet.name}
               className="pet-photo"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+              }}
             />
-          ) : (
-            <User size={40} className="avatar-icon" />
-          )}
+          ) : null}
+          <User size={40} className={`avatar-icon ${pet.photoUrl ? 'hidden' : ''}`} />
         </div>
         
         <h3 className="pet-name">{pet.name}</h3>
@@ -69,4 +92,4 @@ const petProfileCard: React.FC<petProfileCardProps> = ({
   );
 };
 
-export default petProfileCard;
+export default PetFolderCard;

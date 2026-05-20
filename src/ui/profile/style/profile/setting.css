@@ -88,3 +88,57 @@
 .change-password-btn:hover {
   background: var(--color-bg-light);
 }
+
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2;
+}
+
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #b91c1c;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+.form-error .error-suggestion {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.form-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  color: #166534;
+  font-size: 13px;
+  margin: 12px 0;
+  animation: fadeIn 0.3s ease;
+}
+
+.hint.success {
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hint.warning {
+  color: #b45309;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

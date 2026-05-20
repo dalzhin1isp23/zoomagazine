@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     try {
       await login(loginValue.trim(), password);
     } catch {
-      // Ошибка уже установлена в setError внутри useAuth
+      
     }
   };
 

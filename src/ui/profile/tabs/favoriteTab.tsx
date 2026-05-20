@@ -4,102 +4,18 @@ import ProductCard from '../../../entity/ProductCards';
 import { ProductData } from '../../../function/products/filtration/types';
 import "../style/favorite/favorite.css";
 
-const MOCK_WISHLIST: ProductData[] = [
-  {
-    _id: 'p1',
-    name: 'Корм Premium для кошек',
-    price: 2500,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-  {
-    _id: 'p2',
-    name: 'Домик для грызунов',
-    price: 1890,
-    discount: 10,
-    images: [{ url: '', isMain: true }],
-  } as ProductData,
-];
-
 export interface favoriteTabProps {
   items?: ProductData[];
   onNavigate?: (path: string) => void;
+  onToggleFavorite?: (id: string) => void;
 }
 
 const favoriteTab: React.FC<favoriteTabProps> = ({
-  items = MOCK_WISHLIST,
+  items = [],
   onNavigate = () => {},
+  onToggleFavorite = () => {},
 }) => {
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <div className="tab-content">
         <h1 className="page-title">Избранное</h1>
@@ -119,7 +35,11 @@ const favoriteTab: React.FC<favoriteTabProps> = ({
       <h1 className="page-title">Избранное</h1>
       <div className="wishlist-grid">
         {items.map(product => (
-          <ProductCard key={product._id} product={product} />
+          <ProductCard 
+            key={product._id} 
+            product={product}
+            onToggleFavorite={onToggleFavorite}
+          />
         ))}
       </div>
     </div>

@@ -17,11 +17,7 @@ const Header: React.FC = () => {
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-    
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     searchTimeoutRef.current = setTimeout(() => {
       if (value.trim()) {
         navigate(`/catalog?search=${encodeURIComponent(value)}`);
@@ -31,11 +27,17 @@ const Header: React.FC = () => {
     }, 300);
   };
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      e.preventDefault();
+      navigate('/login');
+    }
+  };
+
   useEffect(() => {
     return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
   }, []);
 
@@ -63,7 +65,7 @@ const Header: React.FC = () => {
               onChange={handleSearchChange}
             />
           </div>
-          <Link to="/profile" className="header-btn">
+          <Link to="/profile" className="header-btn" onClick={handleProfileClick}>
             <User size={20} />
           </Link>
           <Link to="/cart" className="header-btn" style={{ position: 'relative' }}>

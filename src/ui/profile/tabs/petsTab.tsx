@@ -3,41 +3,6 @@ import { Plus, PawPrint } from 'lucide-react';
 import PetFolderCard, { PetCardData } from './component/petsProfileCard';
 import "../style/pets/pet.css";
 import "../style/pets/petCard.css";
-const MOCK_PETS: PetCardData[] = [
-  {
-    _id: '1',
-    name: 'Барсик',
-    animal: 'Кот',
-    gender: 'Мальчик',
-    ageYears: 3,
-    photoUrl: '',
-  },
-  {
-    _id: '1',
-    name: 'Барсик',
-    animal: 'Кот',
-    gender: 'Мальчик',
-    ageYears: 3,
-    photoUrl: '',
-  },
-  {
-    _id: '1',
-    name: 'Барсик',
-    animal: 'Кот',
-    gender: 'Мальчик',
-    ageYears: 3,
-    photoUrl: '',
-  },
-  {
-    _id: '1',
-    name: 'Барсик',
-    animal: 'Кот',
-    gender: 'Мальчик',
-    ageYears: 3,
-    photoUrl: '',
-  }
-];
-
 
 export interface petsTabProps {
   pets?: PetCardData[];
@@ -47,7 +12,7 @@ export interface petsTabProps {
 }
 
 const petsTab: React.FC<petsTabProps> = ({ 
-  pets = MOCK_PETS,
+  pets = [],
   onAddClick = () => {},
   onSelectPet = () => {},
   onEditPet = () => {},
@@ -61,7 +26,7 @@ const petsTab: React.FC<petsTabProps> = ({
         </button>
       </div>
 
-      {pets.length === 0 ? (
+      {!pets || pets.length === 0 ? (
         <div className="empty-state">
           <PawPrint size={48} />
           <p>У вас пока нет питомцев</p>

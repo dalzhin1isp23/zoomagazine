@@ -7,7 +7,7 @@ import { Heart, ShoppingCart, Share2, Star, ArrowLeft } from 'lucide-react';
 import { useProductDetails } from '../../function/products/useProductDetails';
 import { useProducts } from '../../function/products/useProducts';
 import "./style/style.css";
-
+import whiskas from '../../entity/image/whiskas.jpg';
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ const ProductDetail: React.FC = () => {
               <div className="main-image">
                 {product.images?.[0]?.url ? (
                   <img 
-                    src={product.images[0].url} 
+                    src={whiskas} 
                     alt={product.images[0].altText || product.name}
                     style={{ maxWidth: '100%', height: 'auto' }}
                   />
