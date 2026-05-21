@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
 import ProductCard from '../../entity/ProductCards';
-import { Heart, ShoppingCart, Share2, Star, ArrowLeft } from 'lucide-react';
+import { Heart, ShoppingCart, Share2, Star, ArrowLeft, Plus, Package } from 'lucide-react';
 import { useProductDetails } from '../../function/products/useProductDetails';
 import { useProducts } from '../../function/products/useProducts';
+import { useFavorites } from '../../function/profile/useFavorite';
 import "./style/style.css";
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
@@ -16,7 +17,9 @@ const ProductDetail: React.FC = () => {
   
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<string>('description');
-  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
+
+
+  const { toggleFavorite, isFavorite: checkIsFavorite } = useFavorites();
 
   const { 
     product, 
@@ -35,8 +38,15 @@ const ProductDetail: React.FC = () => {
     }
   }, [product]);
 
-  const handleAddToCart = () => {
-    console.log(`Added ${quantity} x ${product?.title} to cart`);
+  const handleAddToCart = (qty: number = quantity) => {
+    console.log(`Added ${qty} x ${product?.name} to cart`);
+
+  };
+
+  const handleToggleWishlist = () => {
+    if (product?._id) {
+      toggleFavorite(product._id);
+    }
   };
 
   const getImageUrl = (url?: string) => {
@@ -80,6 +90,11 @@ const ProductDetail: React.FC = () => {
       </>
     );
   }
+
+  const isWishlisted = checkIsFavorite(product._id);
+  const discountedPrice = product.discount && product.discount > 0
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : null;
 
   return (
     <>
@@ -165,8 +180,8 @@ const ProductDetail: React.FC = () => {
               </div>
 
               <div className="product-price-section">
-                <span className="current-price">{product.price} ₽</span>
-                {product.oldPrice && <span className="old-price">{product.oldPrice} ₽</span>}
+                <span className="current-price">{discountedPrice || product.price} ₽</span>
+                {discountedPrice && <span className="old-price">{product.price} ₽</span>}
                 {product.discount && <span className="discount-badge">-{product.discount}%</span>}
               </div>
 
@@ -199,10 +214,31 @@ const ProductDetail: React.FC = () => {
                   </button>
                 </div>
 
+                <div className="bulk-actions">
+                  <button 
+                    className="bulk-btn"
+                    onClick={() => handleAddToCart(10)}
+                    disabled={isLoading || product.remains < 10}
+                    title="Добавить упаковку (+10 шт)"
+                  >
+                    <Package size={16} />
+                    <span>Упаковка +10</span>
+                  </button>
+                  <button 
+                    className="bulk-btn bulk-large"
+                    onClick={() => handleAddToCart(50)}
+                    disabled={isLoading || product.remains < 50}
+                    title="Добавить пачку (+50 шт)"
+                  >
+                    <Plus size={16} />
+                    <span>Пачка +50</span>
+                  </button>
+                </div>
+
                 <button 
                   className="add-to-cart-btn-large" 
-                  onClick={handleAddToCart}
-                  disabled={isLoading || !product.inStock}
+                  onClick={() => handleAddToCart(quantity)}
+                  disabled={isLoading || product.remains <= 0}
                 >
                   <ShoppingCart size={20} />
                   {product.remains > 0 ? 'Добавить в корзину' : 'Нет в наличии'}
@@ -210,10 +246,11 @@ const ProductDetail: React.FC = () => {
 
                 <button 
                   className={`wishlist-btn-large ${isWishlisted ? 'active' : ''}`} 
-                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  onClick={handleToggleWishlist}
                   disabled={isLoading}
+                  title={isWishlisted ? 'Убрать из избранного' : 'Добавить в избранное'}
                 >
-                  <Heart size={20} fill={isWishlisted ? '#ef4444' : 'none'} />
+                  <Heart size={20} fill={isWishlisted ? '#ef4444' : 'none'} color={isWishlisted ? '#ef4444' : 'white'} />
                 </button>
 
                 <button className="share-btn" onClick={() => {
@@ -247,6 +284,10 @@ const ProductDetail: React.FC = () => {
                 <div className="meta-item">
                   <span className="meta-label">Доставка:</span>
                   <span className="meta-value">1-3 дня</span>
+                </div>
+                <div className="meta-item">
+                  <span className="meta-label">Остаток:</span>
+                  <span className="meta-value">{product.remains ?? 0} шт</span>
                 </div>
               </div>
             </div>
@@ -316,7 +357,8 @@ const ProductDetail: React.FC = () => {
                     key={p._id} 
                     product={p} 
                     viewMode="grid"
-                    onClick={() => navigate(`/product/${p._id}`)}
+                    onToggleFavorite={toggleFavorite}
+                    isFavorite={checkIsFavorite(p._id)}
                   />
                 ))}
               </div>
