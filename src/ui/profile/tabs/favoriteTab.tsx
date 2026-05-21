@@ -4,13 +4,13 @@ import ProductCard from '../../../entity/ProductCards';
 import { ProductData } from '../../../function/products/filtration/types';
 import "../style/favorite/favorite.css";
 
-export interface favoriteTabProps {
+export interface FavoriteTabProps {
   items?: ProductData[];
   onNavigate?: (path: string) => void;
   onToggleFavorite?: (id: string) => void;
 }
 
-const favoriteTab: React.FC<favoriteTabProps> = ({
+const FavoriteTab: React.FC<FavoriteTabProps> = ({
   items = [],
   onNavigate = () => {},
   onToggleFavorite = () => {},
@@ -39,6 +39,7 @@ const favoriteTab: React.FC<favoriteTabProps> = ({
             key={product._id} 
             product={product}
             onToggleFavorite={onToggleFavorite}
+            isFavorite={true}
           />
         ))}
       </div>
@@ -46,4 +47,4 @@ const favoriteTab: React.FC<favoriteTabProps> = ({
   );
 };
 
-export default favoriteTab;
+export default FavoriteTab;

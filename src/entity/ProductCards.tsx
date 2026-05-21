@@ -8,9 +8,15 @@ const API_BASE_URL = 'http://127.0.0.1:3000';
 
 interface ProductCardProps {
   product: ProductData;
+  onToggleFavorite?: (id: string) => void;
+  isFavorite?: boolean;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ 
+  product, 
+  onToggleFavorite,
+  isFavorite = false 
+}) => {
   const getImageUrl = (url?: string) => {
     if (!url) return `${API_BASE_URL}/uploads/products/placeholder.jpg`;
     if (url.startsWith('http')) return url;
@@ -23,6 +29,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? Math.round(product.price * (1 - product.discount / 100))
     : null;
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(product._id);
+    }
+  };
+
   return (
     <Link to={`/product/${product._id}`} className="modern-offer-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       {product.discount && product.discount > 0 && (
@@ -30,13 +44,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       )}
       
       <button 
-        className="wishlist-btn-top"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
+        className={`wishlist-btn-top ${isFavorite ? 'active' : ''}`}
+        onClick={handleWishlistClick}
+        title={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
       >
-        <Heart size={24} fill="white" color="white" strokeWidth={1.5} />
+        <Heart 
+          size={24} 
+          fill={isFavorite ? '#ef4444' : 'white'} 
+          color={isFavorite ? '#ef4444' : 'white'} 
+          strokeWidth={1.5} 
+        />
       </button>
 
       <div className="offer-img-container">

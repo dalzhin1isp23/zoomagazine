@@ -8,12 +8,16 @@ import { ViewMode, ProductData, SortOption } from '../../function/products/filtr
 import { useProducts } from '../../function/products/useProducts';
 import { useCategories } from '../../function/products/useCategories';
 import { useTypes } from '../../function/products/useTypes';
+import { useFavorites } from '../../function/profile/useFavorite'; 
 import "./style/style.css";
 
 const Catalog: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchParams, setSearchParams] = useSearchParams();
   const [isUrlSync, setIsUrlSync] = useState(false);
+
+
+  const { favorites, toggleFavorite, isFavorite: checkIsFavorite } = useFavorites();
 
   const initialCategory = searchParams.get('category') || undefined;
   const initialType = searchParams.get('type') || undefined;
@@ -313,6 +317,8 @@ const Catalog: React.FC = () => {
                       key={product._id}
                       product={product}
                       viewMode={viewMode}
+                      onToggleFavorite={toggleFavorite}             
+                      isFavorite={checkIsFavorite(product._id)}      
                     />
                   ))
                 ) : (

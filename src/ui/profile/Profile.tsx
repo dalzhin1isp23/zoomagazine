@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
 
         
         if (photoFile && newPetId) {
-          console.log('📸 Загрузка фото для питомца:', newPetId);
+          console.log(' Загрузка фото для питомца:', newPetId);
           await uploadPetPhoto(newPetId, photoFile);
         }
 
