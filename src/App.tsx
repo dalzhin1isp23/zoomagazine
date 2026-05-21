@@ -22,7 +22,8 @@ const App: React.FC = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/admin" element={<AdminPanel />} />
+        
+        <Route path="/admin/*" element={<AdminPanel />} />
       </Routes>
     </Router>
   );
