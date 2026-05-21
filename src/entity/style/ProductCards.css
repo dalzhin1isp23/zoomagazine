@@ -17,7 +17,7 @@
   transform: translateY(-5px);
 }
 
-/* Контейнер изображения */
+
 .offer-img-container {
   background-color: white;
   padding: 0;
@@ -38,7 +38,7 @@
   object-fit: contain;
 }
 
-/* Бейдж скидки */
+
 .discount-badge {
   position: absolute;
   top: 40px;
@@ -66,7 +66,6 @@
   color: white;
 }
 
-/* Контейнер цены */
 .price-container-white {
   background: white;
   border-radius: 12px;

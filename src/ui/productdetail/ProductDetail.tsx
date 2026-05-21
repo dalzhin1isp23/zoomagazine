@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
 import ProductCard from '../../entity/ProductCards';
-import { Heart, ShoppingCart, Share2, Star, ArrowLeft, Plus, Package } from 'lucide-react';
+import { Heart, ShoppingCart, Share2, Star, ArrowLeft, Plus, Package, Check } from 'lucide-react';
 import { useProductDetails } from '../../function/products/useProductDetails';
 import { useProducts } from '../../function/products/useProducts';
 import { useFavorites } from '../../function/profile/useFavorite';
+import { useCart } from '../../function/profile/useCart';
 import "./style/style.css";
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
@@ -17,9 +18,11 @@ const ProductDetail: React.FC = () => {
   
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<string>('description');
-
+  const [isAdding, setIsAdding] = useState(false);
+  const [showAddedToast, setShowAddedToast] = useState(false);
 
   const { toggleFavorite, isFavorite: checkIsFavorite } = useFavorites();
+  const { addToCart, isInCart, getQuantity } = useCart();
 
   const { 
     product, 
@@ -38,9 +41,19 @@ const ProductDetail: React.FC = () => {
     }
   }, [product]);
 
-  const handleAddToCart = (qty: number = quantity) => {
-    console.log(`Added ${qty} x ${product?.name} to cart`);
-
+  const handleAddToCart = async (qty: number = quantity) => {
+    if (!product?._id || isAdding) return;
+    
+    setIsAdding(true);
+    
+    const success = await addToCart(product._id, qty, product);
+    
+    if (success) {
+      setShowAddedToast(true);
+      setTimeout(() => setShowAddedToast(false), 2000);
+    }
+    
+    setIsAdding(false);
   };
 
   const handleToggleWishlist = () => {
@@ -54,6 +67,15 @@ const ProductDetail: React.FC = () => {
     if (url.startsWith('http')) return url;
     return `${API_BASE_URL}${url}`;
   };
+
+  const discountedPrice = product?.discount && product.discount > 0
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : null;
+
+  const currentPrice = discountedPrice || product?.price || 0;
+  const available = product?.remains ?? 0;
+  const inCartQty = product?._id ? getQuantity(product._id) : 0;
+  const isWishlisted = product?._id ? checkIsFavorite(product._id) : false;
 
   if (isLoading) {
     return (
@@ -91,11 +113,6 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const isWishlisted = checkIsFavorite(product._id);
-  const discountedPrice = product.discount && product.discount > 0
-    ? Math.round(product.price * (1 - product.discount / 100))
-    : null;
-
   return (
     <>
       <Header />
@@ -109,6 +126,13 @@ const ProductDetail: React.FC = () => {
             <span> / </span> 
             <span>{product.name}</span>
           </div>
+
+          {showAddedToast && (
+            <div className="toast-success">
+              <Check size={18} />
+              Добавлено в корзину
+            </div>
+          )}
 
           <div className="product-detail-content">
             <div className="product-gallery">
@@ -180,7 +204,7 @@ const ProductDetail: React.FC = () => {
               </div>
 
               <div className="product-price-section">
-                <span className="current-price">{discountedPrice || product.price} ₽</span>
+                <span className="current-price">{currentPrice} ₽</span>
                 {discountedPrice && <span className="old-price">{product.price} ₽</span>}
                 {product.discount && <span className="discount-badge">-{product.discount}%</span>}
               </div>
@@ -200,7 +224,7 @@ const ProductDetail: React.FC = () => {
                   <button 
                     className="qty-btn" 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={isLoading}
+                    disabled={isLoading || inCartQty + quantity - 1 > available}
                   >
                     −
                   </button>
@@ -208,7 +232,7 @@ const ProductDetail: React.FC = () => {
                   <button 
                     className="qty-btn" 
                     onClick={() => setQuantity(quantity + 1)}
-                    disabled={isLoading}
+                    disabled={isLoading || inCartQty + quantity + 1 > available}
                   >
                     +
                   </button>
@@ -218,8 +242,8 @@ const ProductDetail: React.FC = () => {
                   <button 
                     className="bulk-btn"
                     onClick={() => handleAddToCart(10)}
-                    disabled={isLoading || product.remains < 10}
-                    title="Добавить упаковку (+10 шт)"
+                    disabled={isLoading || isAdding || inCartQty + 10 > available || available < 10}
+                    title={available < 10 ? `Доступно только ${available} шт` : inCartQty + 10 > available ? `Превышает доступное количество` : 'Добавить упаковку (+10 шт)'}
                   >
                     <Package size={16} />
                     <span>Упаковка +10</span>
@@ -227,8 +251,8 @@ const ProductDetail: React.FC = () => {
                   <button 
                     className="bulk-btn bulk-large"
                     onClick={() => handleAddToCart(50)}
-                    disabled={isLoading || product.remains < 50}
-                    title="Добавить пачку (+50 шт)"
+                    disabled={isLoading || isAdding || inCartQty + 50 > available || available < 50}
+                    title={available < 50 ? `Доступно только ${available} шт` : inCartQty + 50 > available ? `Превышает доступное количество` : 'Добавить пачку (+50 шт)'}
                   >
                     <Plus size={16} />
                     <span>Пачка +50</span>
@@ -238,11 +262,38 @@ const ProductDetail: React.FC = () => {
                 <button 
                   className="add-to-cart-btn-large" 
                   onClick={() => handleAddToCart(quantity)}
-                  disabled={isLoading || product.remains <= 0}
+                  disabled={isLoading || isAdding || available <= 0 || inCartQty + quantity > available}
                 >
-                  <ShoppingCart size={20} />
-                  {product.remains > 0 ? 'Добавить в корзину' : 'Нет в наличии'}
+                  {isAdding ? (
+                    <>
+                      <span className="spinner" /> Добавление...
+                    </>
+                  ) : inCartQty > 0 ? (
+                    <>
+                      <ShoppingCart size={20} />
+                      В корзине: {inCartQty} шт
+                    </>
+                  ) : available > 0 ? (
+                    <>
+                      <ShoppingCart size={20} />
+                      Добавить в корзину
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart size={20} />
+                      Нет в наличии
+                    </>
+                  )}
                 </button>
+
+                {inCartQty > 0 && (
+                  <button 
+                    className="go-to-cart-btn"
+                    onClick={() => navigate('/cart')}
+                  >
+                    Перейти в корзину
+                  </button>
+                )}
 
                 <button 
                   className={`wishlist-btn-large ${isWishlisted ? 'active' : ''}`} 
@@ -287,8 +338,17 @@ const ProductDetail: React.FC = () => {
                 </div>
                 <div className="meta-item">
                   <span className="meta-label">Остаток:</span>
-                  <span className="meta-value">{product.remains ?? 0} шт</span>
+                  <span className={`meta-value ${available <= 5 ? 'low-stock' : ''}`}>
+                    {available} шт {available <= 5 && available > 0 && '(мало)'}
+                    {available === 0 && '(нет в наличии)'}
+                  </span>
                 </div>
+                {inCartQty > 0 && (
+                  <div className="meta-item">
+                    <span className="meta-label">В корзине:</span>
+                    <span className="meta-value in-cart">{inCartQty} шт</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

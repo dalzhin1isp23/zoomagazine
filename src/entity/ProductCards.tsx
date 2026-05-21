@@ -47,6 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         className={`wishlist-btn-top ${isFavorite ? 'active' : ''}`}
         onClick={handleWishlistClick}
         title={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+        type="button"
       >
         <Heart 
           size={24} 
@@ -60,6 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <img 
           src={getImageUrl(mainImage)} 
           alt={product.name}
+          className="offer-img"
           onError={(e) => {
             (e.target as HTMLImageElement).src = `${API_BASE_URL}/uploads/products/placeholder.jpg`;
           }}
@@ -82,6 +84,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               e.preventDefault();
               e.stopPropagation();
             }}
+            type="button"
           >
             <ShoppingCart size={20} />
           </button>
