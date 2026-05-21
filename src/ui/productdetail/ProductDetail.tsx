@@ -7,7 +7,9 @@ import { Heart, ShoppingCart, Share2, Star, ArrowLeft } from 'lucide-react';
 import { useProductDetails } from '../../function/products/useProductDetails';
 import { useProducts } from '../../function/products/useProducts';
 import "./style/style.css";
-import whiskas from '../../entity/image/whiskas.jpg';
+
+const API_BASE_URL = 'http://127.0.0.1:3000';
+
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -35,6 +37,12 @@ const ProductDetail: React.FC = () => {
 
   const handleAddToCart = () => {
     console.log(`Added ${quantity} x ${product?.title} to cart`);
+  };
+
+  const getImageUrl = (url?: string) => {
+    if (!url) return `${API_BASE_URL}/uploads/products/placeholder.jpg`;
+    if (url.startsWith('http')) return url;
+    return `${API_BASE_URL}${url}`;
   };
 
   if (isLoading) {
@@ -92,12 +100,19 @@ const ProductDetail: React.FC = () => {
               <div className="main-image">
                 {product.images?.[0]?.url ? (
                   <img 
-                    src={whiskas} 
+                    src={getImageUrl(product.images[0].url)} 
                     alt={product.images[0].altText || product.name}
                     style={{ maxWidth: '100%', height: 'auto' }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `${API_BASE_URL}/uploads/products/placeholder.jpg`;
+                    }}
                   />
                 ) : (
-                  <div style={{fontSize: '200px', textAlign: 'center'}}>🦎</div>
+                  <img 
+                    src={`${API_BASE_URL}/uploads/products/placeholder.jpg`}
+                    alt={product.name}
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
                 )}
               </div>
               <div className="thumbnail-images">
@@ -109,12 +124,19 @@ const ProductDetail: React.FC = () => {
                   >
                     {img.url ? (
                       <img 
-                        src={img.url} 
+                        src={getImageUrl(img.url)} 
                         alt={img.altText || ''}
                         style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `${API_BASE_URL}/uploads/products/placeholder.jpg`;
+                        }}
                       />
                     ) : (
-                      <div style={{fontSize: '40px'}}>🦎</div>
+                      <img 
+                        src={`${API_BASE_URL}/uploads/products/placeholder.jpg`}
+                        alt=""
+                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                      />
                     )}
                   </div>
                 ))}

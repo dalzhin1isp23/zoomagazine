@@ -12,7 +12,7 @@ export interface PetCardData {
   photoUrl?: string;
   ageYears?: number;
   gender?: 'Мальчик' | 'Девочка';
-  folderColor?: string; // ← добавили поле
+  folderColor?: string; 
 }
 
 export interface petProfileCardProps {

@@ -3,13 +3,21 @@ import { Heart, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ProductData } from '../function/products/filtration/types';
 import "./style/ProductCards.css";
-import whiskas from './image/whiskas.jpg';
+
+const API_BASE_URL = 'http://127.0.0.1:3000';
+
 interface ProductCardProps {
   product: ProductData;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const mainImage = product.images?.find(img => img.isMain)?.url || product.images?.[0]?.url || '';
+  const getImageUrl = (url?: string) => {
+    if (!url) return `${API_BASE_URL}/uploads/products/placeholder.jpg`;
+    if (url.startsWith('http')) return url;
+    return `${API_BASE_URL}${url}`;
+  };
+
+  const mainImage = product.images?.find(img => img.isMain)?.url || product.images?.[0]?.url;
   
   const discountedPrice = product.discount && product.discount > 0
     ? Math.round(product.price * (1 - product.discount / 100))
@@ -32,7 +40,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </button>
 
       <div className="offer-img-container">
-        <img src={whiskas} alt={product.name} />
+        <img 
+          src={getImageUrl(mainImage)} 
+          alt={product.name}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = `${API_BASE_URL}/uploads/products/placeholder.jpg`;
+          }}
+        />
       </div>
 
       <div className="offer-info-bottom">
