@@ -10,11 +10,13 @@ const ProductsList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
+  const [isVetFilter, setIsVetFilter] = useState<'all' | 'true' | 'false'>('all');
 
   const { products, isLoading, error, pagination, refetch } = useAdminProducts({
     page,
     search: searchTerm,
     status: statusFilter,
+    isVetMedicine: isVetFilter !== 'all' ? isVetFilter : undefined,
   });
 
   const { deleteProduct } = useProductMutation();
@@ -109,6 +111,15 @@ const ProductsList: React.FC = () => {
           <option value="low">Мало</option>
           <option value="out">Нет в наличии</option>
         </select>
+        <select 
+          className="vet-filter"
+          value={isVetFilter}
+          onChange={(e) => setIsVetFilter(e.target.value as 'all' | 'true' | 'false')}
+        >
+          <option value="all">Все товары</option>
+          <option value="true">Только ветпрепараты</option>
+          <option value="false">Без ветпрепаратов</option>
+        </select>
       </div>
 
       <div className="table-wrapper">
@@ -119,6 +130,7 @@ const ProductsList: React.FC = () => {
               <th>Название</th>
               <th>Цена</th>
               <th>Остаток</th>
+              <th>Ветпрепарат</th>
               <th>Статус</th>
               <th>Действия</th>
             </tr>
@@ -139,6 +151,13 @@ const ProductsList: React.FC = () => {
                 <td className="product-name-cell">{product.name || 'Без названия'}</td>
                 <td>{product.price ? `${product.price} ₽` : '—'}</td>
                 <td>{product.remains ?? 0} шт</td>
+                <td>
+                  {product.isVetMedicine ? (
+                    <span className="vet-badge">✓ Ветпрепарат</span>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </td>
                 <td>{getStatusBadge(product.remains)}</td>
                 <td>
                   <div className="action-buttons">

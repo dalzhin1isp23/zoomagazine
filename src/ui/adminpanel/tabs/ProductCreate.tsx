@@ -18,6 +18,7 @@ const ProductCreate: React.FC = () => {
     discount: '0',
     category: '',
     type: '',
+    isVetMedicine: false,
   });
 
   const [categories, setCategories] = useState<any[]>([]);
@@ -51,8 +52,12 @@ const ProductCreate: React.FC = () => {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     setSubmitError(null);
   };
 
@@ -71,44 +76,46 @@ const ProductCreate: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setSubmitError(null);
+    e.preventDefault();
+    setSubmitError(null);
 
-  if (!formData.name.trim()) {
-    setSubmitError('Название обязательно');
-    return;
-  }
-  if (!formData.price || Number(formData.price) < 0) {
-    setSubmitError('Некорректная цена');
-    return;
-  }
-
-  const data = new FormData();
-  data.append('name', formData.name.trim());
-  data.append('description', formData.description?.trim() || '');
-  data.append('manufacturer', formData.manufacturer?.trim() || '');
-  data.append('price', formData.price);
-  data.append('remains', formData.remains || '0');
-  data.append('discount', formData.discount || '0');
-
-  if (formData.category && formData.category.length === 24) {
-    data.append('category', formData.category);
-  }
-  if (formData.type && formData.type.length === 24) {
-    data.append('type', formData.type);
-  }
-
-  imageFiles.forEach(file => data.append('images', file));
-
-  try {
-    const created = await createProduct(data);
-    if (created) {
-      navigate('/admin');
+    if (!formData.name.trim()) {
+      setSubmitError('Название обязательно');
+      return;
     }
-  } catch (err: any) {
-    setSubmitError(err.message || 'Ошибка создания товара');
-  }
-};
+    if (!formData.price || Number(formData.price) < 0) {
+      setSubmitError('Некорректная цена');
+      return;
+    }
+
+    const data = new FormData();
+    data.append('name', formData.name.trim());
+    data.append('description', formData.description?.trim() || '');
+    data.append('manufacturer', formData.manufacturer?.trim() || '');
+    data.append('price', formData.price);
+    data.append('remains', formData.remains || '0');
+    data.append('discount', formData.discount || '0');
+
+    data.append('isVetMedicine', formData.isVetMedicine ? 'true' : 'false');
+
+    if (formData.category && formData.category.length === 24) {
+      data.append('category', formData.category);
+    }
+    if (formData.type && formData.type.length === 24) {
+      data.append('type', formData.type);
+    }
+
+    imageFiles.forEach(file => data.append('images', file));
+
+    try {
+      const created = await createProduct(data);
+      if (created) {
+        navigate('/admin');
+      }
+    } catch (err: any) {
+      setSubmitError(err.message || 'Ошибка создания товара');
+    }
+  };
 
   return (
     <div className="product-edit-container">
@@ -158,6 +165,19 @@ const ProductCreate: React.FC = () => {
                 ))}
               </select>
             </div>
+          </div>
+
+ 
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input 
+                type="checkbox" 
+                name="isVetMedicine"
+                checked={formData.isVetMedicine}
+                onChange={handleInputChange}
+              />
+              <span>Ветеринарный препарат</span>
+            </label>
           </div>
         </div>
 

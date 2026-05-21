@@ -19,7 +19,6 @@ const ProductEdit: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-
   const extractProductId = (pathname: string): string | null => {
     const match = pathname.match(/\/admin\/products\/([0-9a-fA-F]{24})\/edit/);
     return match ? match[1] : null;
@@ -45,6 +44,7 @@ const ProductEdit: React.FC = () => {
     discount: '',
     category: '',
     type: '',
+    isVetMedicine: false,
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -65,6 +65,7 @@ const ProductEdit: React.FC = () => {
         discount: product.discount?.toString() || '0',
         category: typeof product.category === 'object' ? product.category?._id || '' : product.category || '',
         type: typeof product.type === 'object' ? product.type?._id || '' : product.type || '',
+        isVetMedicine: product.isVetMedicine === true || product.isVetMedicine === 'true',
       });
     }
   }, [product]);
@@ -94,8 +95,12 @@ const ProductEdit: React.FC = () => {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     setSubmitError(null);
   };
 
@@ -143,9 +148,10 @@ const ProductEdit: React.FC = () => {
       price: Number(formData.price),
       remains: Number(formData.remains),
       discount: Number(formData.discount),
+
+      isVetMedicine: formData.isVetMedicine === true,
     };
 
-    // Только валидные ObjectId
     if (formData.category && /^[0-9a-fA-F]{24}$/.test(formData.category)) {
       updateData.category = formData.category;
     }
@@ -267,6 +273,18 @@ const ProductEdit: React.FC = () => {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input 
+                type="checkbox" 
+                name="isVetMedicine"
+                checked={formData.isVetMedicine}
+                onChange={handleInputChange}
+              />
+              <span>Ветеринарный препарат</span>
+            </label>
           </div>
         </div>
 

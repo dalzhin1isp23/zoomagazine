@@ -10,6 +10,7 @@ interface UseAdminProductsParams {
   category?: string;
   type?: string;
   status?: string;
+  isVetMedicine?: string; 
 }
 
 interface UseAdminProductsReturn {
@@ -62,6 +63,7 @@ export const useAdminProducts = (params: UseAdminProductsParams = {}): UseAdminP
       if (params.category) queryParams.append('category', params.category);
       if (params.type) queryParams.append('type', params.type);
       if (params.status) queryParams.append('status', params.status);
+      if (params.isVetMedicine) queryParams.append('isVetMedicine', params.isVetMedicine); 
 
       const url = `${API_BASE_URL}/api/admin/products?${queryParams}`;
 
@@ -105,7 +107,7 @@ export const useAdminProducts = (params: UseAdminProductsParams = {}): UseAdminP
     } finally {
       setIsLoading(false);
     }
-  }, [params.page, params.limit, params.search, params.category, params.type, params.status]);
+  }, [params.page, params.limit, params.search, params.category, params.type, params.status, params.isVetMedicine]);
 
   useEffect(() => {
     fetchProducts();
@@ -355,7 +357,6 @@ export const useAdminProduct = (id: string | null) => {
       return;
     }
 
-   
     const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(id);
     if (!isValidObjectId) {
       console.error('[Admin] Invalid product ID format:', id);

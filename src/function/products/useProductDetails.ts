@@ -21,7 +21,7 @@ export const useProductDetails = (productId: string | undefined): UseProductRetu
     setError(null);
 
     try {
-      // 👇 Бэкенд возвращает { success, data: ProductData }
+
       const response = await api.get<{
         success: boolean;
         data?: ProductData;
@@ -30,7 +30,7 @@ export const useProductDetails = (productId: string | undefined): UseProductRetu
       const responseData = response.data;
 
       if (responseData?.success) {
-        // 👇 Читаем из data, а не product
+    
         setProduct(responseData.data || null);
       } else {
         throw new Error(responseData?.message || 'Ошибка загрузки товара');
