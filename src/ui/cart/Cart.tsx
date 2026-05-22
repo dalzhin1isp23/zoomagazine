@@ -215,7 +215,7 @@ const Cart: React.FC = () => {
                 </button>
 
                 <button 
-                  className="clear-cart-btn" 
+                  className="continue-shopping-btn" 
                   onClick={() => {
                     if (window.confirm('Очистить корзину?')) clearCart();
                   }}

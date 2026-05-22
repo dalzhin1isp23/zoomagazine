@@ -7,6 +7,7 @@ export interface OrderItemRowProps {
     name: string;
     quantity: number;
     image?: string;
+    price?: number;
   };
 }
 
@@ -21,8 +22,16 @@ const OrderItemRow: React.FC<OrderItemRowProps> = ({ item }) => (
     </div>
     <div className="order-item-info">
       <span className="order-item-name">{item.name}</span>
+      {item.price && (
+        <span className="order-item-price">{item.price} ₽</span>
+      )}
     </div>
     <div className="order-item-qty">x{item.quantity}</div>
+    {item.price && (
+      <div className="order-item-subtotal">
+        {(item.price * item.quantity)} ₽
+      </div>
+    )}
   </div>
 );
 

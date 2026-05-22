@@ -7,44 +7,54 @@ export interface OrderBlockProps {
     id: string;
     createdAt: string;
     estimatedDelivery: string;
-    status: 'delivered' | 'shipping' | 'processing' | string;
+    status: string;
     total: string;
-    items: Array<{ name: string; quantity: number; image?: string }>;
+    items: Array<{ 
+      name: string; 
+      quantity: number; 
+      image?: string;
+      price?: number;
+    }>;
+    adressPoint: string;
+    deliveryMethod?: string;
+    paymentMethod?: string;
+    hasVetMedicine?: boolean;
+    vetDocuments?: Array<{ url: string; filename: string }>;
   };
   onRepeat?: (id: string) => void;
-  onDetails?: (id: string) => void;
 }
 
 const getStatusColor = (status: string): string => {
-  switch(status) {
-    case 'delivered': return '#22c55e';
-    case 'shipping': return '#f97316';
-    case 'processing': return '#3b82f6';
-    default: return '#64748b';
-  }
+  const lower = status.toLowerCase();
+  if (lower.includes('доставлен') || lower === 'delivered') return '#22c55e';
+  if (lower.includes('отправлен') || lower.includes('в пути') || lower === 'shipping') return '#f97316';
+  if (lower.includes('обрабат') || lower === 'processing') return '#3b82f6';
+  if (lower.includes('отмен') || lower === 'cancelled') return '#ef4444';
+  return '#64748b';
 };
 
 const getStatusText = (status: string): string => {
-  switch(status) {
-    case 'delivered': return 'Доставлен';
-    case 'shipping': return 'В пути';
-    case 'processing': return 'Обрабатывается';
-    default: return status;
-  }
+  const lower = status.toLowerCase();
+  if (lower.includes('доставлен')) return 'Доставлен';
+  if (lower.includes('отправлен') || lower.includes('в пути')) return 'В пути';
+  if (lower.includes('обрабат')) return 'Обрабатывается';
+  if (lower.includes('нов') || lower === 'new') return 'Новый';
+  if (lower.includes('отмен')) return 'Отменён';
+  return status;
 };
 
-const OrderBlock: React.FC<OrderBlockProps> = ({ order, onRepeat = () => {}, onDetails = () => {} }) => (
+const OrderBlock: React.FC<OrderBlockProps> = ({ order, onRepeat = () => {} }) => (
   <div className="order-block">
     <div className="order-block-header">
       <div className="order-meta">
-        <span className="order-id">#{order.id}</span>
+        <span className="order-id">#{order.id.slice(-8)}</span>
         <div className="order-dates">
           <span>Создан: {order.createdAt}</span>
           <span className="date-separator">•</span>
           <span>Ожидается: {order.estimatedDelivery}</span>
         </div>
       </div>
-      <span className="order-status-badge" style={{ color: getStatusColor(order.status) }}>
+      <span className="order-status-badge" style={{ color: getStatusColor(order.status), borderColor: getStatusColor(order.status) }}>
         {getStatusText(order.status)}
       </span>
     </div>
@@ -55,10 +65,24 @@ const OrderBlock: React.FC<OrderBlockProps> = ({ order, onRepeat = () => {}, onD
       ))}
     </div>
 
+    {order.hasVetMedicine && order.vetDocuments && order.vetDocuments.length > 0 && (
+      <div className="order-vet-info">
+        <span className="vet-badge"> Ветпрепараты</span>
+        <span className="vet-docs-count">Документов: {order.vetDocuments.length}</span>
+      </div>
+    )}
+
     <div className="order-block-footer">
-      <span className="order-total">Итого: {order.total}</span>
+      <div className="order-footer-left">
+        <span className="order-total">Итого: {order.total}</span>
+        <span className="order-address">{order.adressPoint}</span>
+        {(order.deliveryMethod || order.paymentMethod) && (
+          <span className="order-delivery-payment">
+            {order.deliveryMethod === 'pickup' ? 'Самовывоз' : 'Курьер'} • {order.paymentMethod === 'cash' ? 'Наличные' : 'Карта'}
+          </span>
+        )}
+      </div>
       <div className="order-block-actions">
-        <button className="btn-order-secondary" onClick={() => onDetails(order.id)}>Подробнее</button>
         <button className="btn-order-primary" onClick={() => onRepeat(order.id)}>Повторить</button>
       </div>
     </div>

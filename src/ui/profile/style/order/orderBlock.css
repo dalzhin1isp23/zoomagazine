@@ -12,7 +12,9 @@
 .order-block:hover {
   box-shadow: var(--shadow-md);
 }
-
+.vet-badge{
+  margin: 5px;
+}
 .order-block-header {
   display: flex;
   justify-content: space-between;

@@ -12,6 +12,7 @@ export interface UserProfile {
   login?: string;      
   phone?: string;
   mail?: string;
+  avatar?: string;
   notifications: UserNotifications;
   status?: 'active' | 'blocked' | 'pending';
   isVerified?: boolean;
@@ -35,13 +36,13 @@ export interface UseProfileSettingsReturn {
   profile: UserProfile | null;
   loading: boolean;
   error: string | null;
-  errorField: string | null;  
+  errorField: string | null;
   updateProfile: (data: ProfileUpdatePayload) => Promise<boolean>;
   toggleDiscounts: () => Promise<void>;
   refresh: () => Promise<void>;
+  uploadAvatar: (file: File) => Promise<boolean>;  
+  removeAvatar: () => Promise<boolean>;             
 }
-
-
 const profileApi = {
   get: () => {
     return api.get<ApiResponse<UserProfile>>('/profile')
@@ -111,6 +112,47 @@ export const useProfileSettings = (): UseProfileSettingsReturn => {
     const success = await updateProfile({ notifications: newNotifications });
     if (!success) setProfile(previous);
   };
+  const uploadAvatar = async (file: File): Promise<boolean> => {
+    try {
+      setError(null);
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      const { data } = await api.patch<ApiResponse<UserProfile>>('/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      if (data?.status === 'success' && data.data) {
+        setProfile(data.data);
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Avatar upload error:', err);
+      const msg = err.response?.data?.message || err.message || 'Ошибка загрузки аватара';
+      setError(msg);
+      return false;
+    }
+  };
+
+  const removeAvatar = async (): Promise<boolean> => {
+    try {
+      setError(null);
+      const { data } = await api.delete<ApiResponse<UserProfile>>('/profile/avatar');
+      
+      if (data?.status === 'success' && data.data) {
+        setProfile(data.data);
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Avatar remove error:', err);
+      const msg = err.response?.data?.message || err.message || 'Ошибка удаления аватара';
+      setError(msg);
+      return false;
+    }
+  };
+
 
   return {
     profile,
@@ -120,5 +162,7 @@ export const useProfileSettings = (): UseProfileSettingsReturn => {
     updateProfile,
     toggleDiscounts,
     refresh: fetchProfile,
+    uploadAvatar,    
+    removeAvatar,
   };
 };

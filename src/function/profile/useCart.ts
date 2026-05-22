@@ -9,7 +9,6 @@ export const useCart = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Загрузка корзины из localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
@@ -25,7 +24,6 @@ export const useCart = () => {
     }
   }, []);
 
- 
   const saveCart = useCallback((newItems: CartItem[]) => {
     try {
       const cartState: CartState = {
@@ -40,7 +38,6 @@ export const useCart = () => {
     }
   }, []);
 
-
   const isInCart = useCallback((productId: string): boolean => {
     return items.some(item => item.product._id === productId);
   }, [items]);
@@ -49,7 +46,6 @@ export const useCart = () => {
     const item = items.find(i => i.product._id === productId);
     return item?.quantity || 0;
   }, [items]);
-
 
   const addToCart = useCallback(async (
     productId: string, 
@@ -63,7 +59,6 @@ export const useCart = () => {
       return false;
     }
 
-
     let product = productData;
     if (!product) {
       try {
@@ -74,7 +69,6 @@ export const useCart = () => {
         return false;
       }
     }
-
 
     const available = product.remains ?? 0;
     const currentQty = getQuantity(productId);
@@ -100,6 +94,8 @@ export const useCart = () => {
           price: product.price,
           discount: product.discount,
           remains: product.remains,
+          // ← КРИТИЧНО: добавляем isVetMedicine
+          isVetMedicine: product.isVetMedicine,
           images: product.images,
           category: product.category,
           type: product.type
@@ -113,13 +109,11 @@ export const useCart = () => {
     return true;
   }, [items, getQuantity, saveCart]);
 
-
   const updateQuantity = useCallback((productId: string, quantity: number): boolean => {
     if (quantity < 1) return removeItem(productId);
     
     const item = items.find(i => i.product._id === productId);
     if (!item) return false;
-
 
     if (quantity > (item.product.remains ?? 0)) {
       setError(`Доступно только ${item.product.remains} шт.`);
@@ -134,7 +128,6 @@ export const useCart = () => {
     return true;
   }, [items, saveCart]);
 
-
   const removeItem = useCallback((productId: string): boolean => {
     const newItems = items.filter(i => i.product._id !== productId);
     saveCart(newItems);
@@ -145,7 +138,6 @@ export const useCart = () => {
     saveCart([]);
   }, [saveCart]);
 
-
   const totals = useCallback(() => {
     const subtotal = items.reduce((sum, item) => {
       const price = item.product.discount && item.product.discount > 0
@@ -154,11 +146,9 @@ export const useCart = () => {
       return sum + price * item.quantity;
     }, 0);
     
-    const delivery = subtotal >= 3000 ? 0 : 300;
-    const total = subtotal + delivery;
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    return { subtotal, delivery, total, totalItems };
+    return { subtotal, totalItems };
   }, [items]);
 
   const syncStock = useCallback(async () => {
@@ -170,13 +160,13 @@ export const useCart = () => {
           const { data } = await api.get(`/products/${item.product._id}`);
           const freshProduct = data.data;
           
-   
           if (!freshProduct || (item.quantity > (freshProduct.remains ?? 0))) {
             return {
               ...item,
               product: {
                 ...item.product,
-                remains: freshProduct?.remains ?? 0
+                remains: freshProduct?.remains ?? 0,
+                isVetMedicine: freshProduct?.isVetMedicine
               },
               quantity: Math.min(item.quantity, freshProduct?.remains ?? 0)
             };
@@ -188,7 +178,8 @@ export const useCart = () => {
               ...item.product,
               remains: freshProduct.remains,
               price: freshProduct.price,
-              discount: freshProduct.discount
+              discount: freshProduct.discount,
+              isVetMedicine: freshProduct.isVetMedicine
             }
           };
         } catch {
