@@ -23,7 +23,7 @@
   padding: 0;
   border-radius: 15px 100px 15px 15px;
   height: 300px;
-  width: 240px;
+  width: 200px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -125,4 +125,12 @@
 
 .cart-btn-small:hover {
   background: rgba(113, 178, 128, 0.1);
+}
+
+.modern-offer-card.vet-medicine {
+  background: #76bbbf;
+}
+
+.modern-offer-card.vet-medicine:hover {
+  background: #47a4ac;
 }

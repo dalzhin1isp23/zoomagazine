@@ -5,7 +5,7 @@ import ProductsList from './tabs/ProductList';
 import ProductEdit from './tabs/ProductEdit';
 import ProductCreate from './tabs/ProductCreate';
 import { useNavigate, useLocation } from 'react-router-dom';
-import "./style/style.css";
+import "./style/styleAdmin.css";
 
 interface NavButtonProps {
   icon: LucideIcon;

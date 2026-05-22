@@ -102,7 +102,7 @@ const ProductsList: React.FC = () => {
           />
         </div>
         <select 
-          className="status-filter"
+          className="vet-filter"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >

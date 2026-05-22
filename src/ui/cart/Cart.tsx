@@ -4,6 +4,7 @@ import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, AlertCircle } from 'lucide-react';
 import { useCart } from '../../function/profile/useCart';
+import { ShoppingCart } from 'lucide-react';
 import "./style/style.css";
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
@@ -232,7 +233,7 @@ const Cart: React.FC = () => {
             </div>
           ) : (
             <div className="cart-empty">
-              <div style={{fontSize: '100px', marginBottom: '20px'}}>🛒</div>
+              <div style={{fontSize: '100px', marginBottom: '20px'}}><ShoppingCart/></div>
               <h2>Корзина пуста</h2>
               <p>Добавьте товары, чтобы оформить заказ</p>
               <button className="go-to-catalog-btn" onClick={() => navigate('/catalog')}>

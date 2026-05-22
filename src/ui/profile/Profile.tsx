@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
-import { User, LogOut, Package, PawPrint, BookHeart, UserRoundCog } from 'lucide-react';
+import { User, LogOut, Package, PawPrint, BookHeart, UserRoundCog, Shield } from 'lucide-react';
 import "./style/profile/profile.css";
 import OrdersTab from './tabs/ordersTab';
 import PetsTab from './tabs/petsTab';
@@ -30,6 +30,11 @@ const Profile: React.FC = () => {
   
   const { orders, fetchOrders } = useOrders();
   const { favorites, fetchFavorites, toggleFavorite } = useFavorites();
+
+
+  const isAdmin = profile?.role?.name?.toLowerCase() === 'admin' || 
+                  profile?.role === 'admin' ||
+                  profile?.role?._id === '2'; 
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
@@ -65,13 +70,39 @@ const Profile: React.FC = () => {
                 <h3>{profile?.login}</h3>
                 <p>{profile?.mail || ''}</p>
                 {profile?.phone && <p className="user-phone">{profile.phone}</p>}
+              
+                {isAdmin && (
+                  <span className="admin-badge">Администратор</span>
+                )}
               </div>
+              
               <nav className="profile-nav">
-                <button className={`nav-item ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}><Package /> Мои заказы</button>
-                <button className={`nav-item ${activeTab === 'pets' ? 'active' : ''}`} onClick={() => { setActiveTab('pets'); setPetsView('list'); }}><PawPrint /> Мои питомцы</button>
-                <button className={`nav-item ${activeTab === 'wishlist' ? 'active' : ''}`} onClick={() => setActiveTab('wishlist')}><BookHeart /> Избранное</button>
-                <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}><UserRoundCog /> Настройки</button>
-                <button className="nav-item logout" onClick={handleLogout}><LogOut size={20} /> Выйти</button>
+               
+                {isAdmin && (
+                  <button 
+                    className="nav-item admin-panel-btn" 
+                    onClick={() => navigate('/admin')}
+                    title="Перейти в админ-панель"
+                  >
+                    <Shield size={20} /> Админ-панель
+                  </button>
+                )}
+                
+                <button className={`nav-item ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}>
+                  <Package /> Мои заказы
+                </button>
+                <button className={`nav-item ${activeTab === 'pets' ? 'active' : ''}`} onClick={() => { setActiveTab('pets'); setPetsView('list'); }}>
+                  <PawPrint /> Мои питомцы
+                </button>
+                <button className={`nav-item ${activeTab === 'wishlist' ? 'active' : ''}`} onClick={() => setActiveTab('wishlist')}>
+                  <BookHeart /> Избранное
+                </button>
+                <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}>
+                  <UserRoundCog /> Настройки
+                </button>
+                <button className="nav-item logout" onClick={handleLogout}>
+                  <LogOut size={20} /> Выйти
+                </button>
               </nav>
             </aside>
 
@@ -101,40 +132,36 @@ const Profile: React.FC = () => {
                 />
               )}
               
-             {activeTab === 'pets' && petsView === 'form' && (
-  <PetForm 
-    initialPet={selectedPet || undefined} 
-    onCancel={() => { setPetsView('list'); setSelectedPet(null); }} 
-    onSubmit={async (data) => {
-      try {
-        const { photoFile, ...petJsonData } = data;
-        console.log(' JSON для отправки:', petJsonData);
+              {activeTab === 'pets' && petsView === 'form' && (
+                <PetForm 
+                  initialPet={selectedPet || undefined} 
+                  onCancel={() => { setPetsView('list'); setSelectedPet(null); }} 
+                  onSubmit={async (data) => {
+                    try {
+                      const { photoFile, ...petJsonData } = data;
+                      let newPetId = selectedPet?._id;
 
-        let newPetId = selectedPet?._id;
+                      if (selectedPet) {
+                        await updatePet(selectedPet._id, petJsonData);
+                      } else {
+                        const created = await addPet(petJsonData);
+                        newPetId = created._id;
+                      }
+                      
+                      if (photoFile && newPetId) {
+                        await uploadPetPhoto(newPetId, photoFile);
+                      }
 
-        if (selectedPet) {
-          await updatePet(selectedPet._id, petJsonData);
-        } else {
-          const created = await addPet(petJsonData);
-          newPetId = created._id;
-        }
-
-        
-        if (photoFile && newPetId) {
-          console.log(' Загрузка фото для питомца:', newPetId);
-          await uploadPetPhoto(newPetId, photoFile);
-        }
-
-        await fetchPets(); 
-        setPetsView('list');
-        setSelectedPet(null);
-      } catch (err: any) {
-        console.error(' Ошибка сохранения:', err);
-        alert(err.message || 'Не удалось сохранить питомца');
-      }
-    }}
-  />
-)}
+                      await fetchPets(); 
+                      setPetsView('list');
+                      setSelectedPet(null);
+                    } catch (err: any) {
+                      console.error('Ошибка сохранения:', err);
+                      alert(err.message || 'Не удалось сохранить питомца');
+                    }
+                  }}
+                />
+              )}
               
               {activeTab === 'wishlist' && <FavoriteTab items={favorites} onNavigate={navigate} onToggleFavorite={toggleFavorite} />}
               {activeTab === 'settings' && profile && <SettingsTab user={{ mail: profile.mail || '', phone: profile.phone || '' }} onSave={updateProfile} />}

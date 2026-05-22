@@ -1,7 +1,8 @@
-import React from 'react';
-import { Heart, ShoppingCart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, ShoppingCart, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ProductData } from '../function/products/filtration/types';
+import { useCart } from '../function/profile/useCart';
 import "./style/ProductCards.css";
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
@@ -17,6 +18,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onToggleFavorite,
   isFavorite = false 
 }) => {
+  const isVetMedicine = product.isVetMedicine === true;
+  const { addToCart, isInCart } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
   const getImageUrl = (url?: string) => {
     if (!url) return `${API_BASE_URL}/uploads/products/placeholder.jpg`;
     if (url.startsWith('http')) return url;
@@ -25,9 +30,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const mainImage = product.images?.find(img => img.isMain)?.url || product.images?.[0]?.url;
   
-  const discountedPrice = product.discount && product.discount > 0
+  const discountedPrice = typeof product.discount === 'number' && product.discount > 0
     ? Math.round(product.price * (1 - product.discount / 100))
     : null;
+
+  const inCart = isInCart(product._id);
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isAdding || inCart) return;
+    
+    setIsAdding(true);
+    
+    await addToCart(product._id, 1, product);
+    
+    setTimeout(() => setIsAdding(false), 300);
+  };
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,8 +58,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Link to={`/product/${product._id}`} className="modern-offer-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-      {product.discount && product.discount > 0 && (
+    <Link 
+      to={`/product/${product._id}`} 
+      className={`modern-offer-card ${isVetMedicine ? 'vet-medicine' : ''}`} 
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    >
+      {typeof product.discount === 'number' && product.discount > 0 && (
         <div className="discount-badge">-{product.discount}%</div>
       )}
       
@@ -73,20 +97,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
         
         <div className="price-container-white">
           <div>
-            {discountedPrice && (
+            {discountedPrice !== null && (
               <span className="old-price">{product.price}₽</span>
             )}
-            <span className="current-price">{discountedPrice || product.price}₽</span>
+            <span className="current-price">{discountedPrice ?? product.price}₽</span>
           </div>
+          
           <button 
-            className="cart-btn-small"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
+            className={`cart-btn-small ${inCart ? 'in-cart' : ''} ${isAdding ? 'adding' : ''}`}
+            onClick={handleAddToCart}
+            disabled={isAdding || inCart}
             type="button"
+            title={inCart ? 'Уже в корзине' : 'Добавить в корзину'}
           >
-            <ShoppingCart size={20} />
+            {isAdding ? (
+              <span className="spinner-mini" />
+            ) : inCart ? (
+              <Check size={20} />
+            ) : (
+              <ShoppingCart size={20} />
+            )}
           </button>
         </div>
       </div>
