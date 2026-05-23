@@ -52,9 +52,9 @@ body {
   font-weight: bold;
   font-size: 18px;
 }
-/* Фирменная кнопка-категория в стиле твоего макета, но чище */
+
 .category-pill {
-  background-color: #5ba373; /* Твой оригинальный зеленый */
+  background-color: #5ba373; 
   color: white;
   padding: 8px 24px;
   border-radius: 999px;
@@ -73,7 +73,6 @@ body {
   box-shadow: 0 4px 12px rgba(91, 163, 115, 0.3);
 }
 
-/* Карточка товара: берем структуру из макета и добавляем "стекло" */
 .modern-offer-card {
   background: white;
   border-radius: 28px;
@@ -86,7 +85,6 @@ body {
   box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* Фишка: ярлычок скидки как в старых добрых магазинах, но в стиле UI 2024 */
 .promo-tag {
   position: absolute;
   top: 12px;
@@ -100,7 +98,6 @@ body {
   z-index: 2;
 }
 
-/* Поиск: гибрид твоего центрального поиска и современного инпута */
 .glass-search-container {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(15px);
@@ -120,9 +117,9 @@ body {
   width: 100%;
   outline: none;
 }
-/* Контейнер категории из макета */
+
 .category-card-custom {
-  background-color: #71b280; /* Тот самый зеленый из макета */
+  background-color: #71b280; 
   border-radius: 12px;
   padding: 20px;
   width: 160px;
@@ -139,7 +136,7 @@ body {
 .category-card-custom:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  background-color: #5ba373; /* Чуть темнее при наведении */
+  background-color: #5ba373;
 }
 
 .category-card-title {
@@ -152,12 +149,11 @@ body {
   padding-left: 10px;
 }
 
-/* Та самая розовая кнопка со стрелкой */
 .category-card-arrow {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #ff6b6b; /* Акцентный розовый */
+  background-color: #ff6b6b;
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -191,7 +187,6 @@ body {
   object-fit: contain;
 }
 
-/* Желтый ярлык скидки */
 .discount-badge {
   position: absolute;
   top: 15px;
@@ -206,7 +201,6 @@ body {
   z-index: 2;
 }
 
-/* Нижняя часть с ценой */
 .offer-info-bottom {
   padding: 12px;
   color: white;
@@ -242,7 +236,6 @@ body {
   font-weight: 900;
 }
 
-/* Кнопка "Сердце" */
 .wishlist-btn-top {
   position: absolute;
   top: 10px;
@@ -365,7 +358,6 @@ body {
   justify-content: center;
 }
 
-/* Hero Section */
 .hero {
   position: relative;
   height: 400px;
@@ -436,7 +428,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Categories Section */
 .section {
   padding: 64px 0;
 }
@@ -518,7 +509,6 @@ body {
   color: #334155;
 }
 
-/* Special Offers Section */
 .special-offers {
   background-color: #064e3b;
   color: white;
@@ -647,7 +637,6 @@ body {
   background-color: #ea580c;
 }
 
-/* About Section */
 .about {
   display: flex;
   flex-direction: column;
@@ -736,7 +725,6 @@ body {
   color: #64748b;
 }
 
-/* Footer */
 .footer {
   background-color: #0f172a;
   color: #94a3b8;
@@ -844,13 +832,12 @@ body {
 .social-btn:hover {
   background-color: #16a34a;
 }
-/* Дополнения для соответствия макету с ящерицей */
-/* Стили для рекламного блока Акций */
+
 .promo-hero {
   position: relative;
   height: 500px;
   margin: 40px 0;
-  border-radius: 32px; /* Скругляем углы для современности */
+  border-radius: 32px; 
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -902,7 +889,7 @@ body {
 
 .promo-title span {
   display: block;
-  color: #4ade80; /* Ярко-зеленый акцент */
+  color: #4ade80;
 }
 
 .promo-description {
@@ -938,12 +925,12 @@ body {
   cursor: pointer;
   transition: all 0.3s;
 }
-/* Улучшение сетки категорий */
+
 .category-img {
   background: white;
-  border: none; /* Убираем скучную рамку */
+  border: none; 
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  border-radius: 30px; /* Более мягкое скругление */
+  border-radius: 30px; 
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -952,7 +939,7 @@ body {
   box-shadow: 0 15px 30px rgba(22, 163, 74, 0.15);
 }
 
-/* Улучшение карточек товаров */
+
 .offer-card {
   border: none;
   background: white;
@@ -973,11 +960,11 @@ body {
 }
 
 .offer-price {
-  color: #16a34a; /* Приводим к единому зеленому */
+  color: #16a34a;
   font-size: 28px;
 }
 
-/* Стили для секции "О нас" */
+
 .about-img img {
   border-radius: 40px;
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
@@ -1009,7 +996,7 @@ body {
   gap: 30px;
 }
 
-/* Обновленный логотип поверх фото */
+
 .hero-logo-container {
   text-align: center;
   z-index: 10;
@@ -1034,7 +1021,7 @@ body {
   position: relative;
 }
 
-/* Стили для кнопок-категорий поверх фото */
+
 .hero-nav {
   display: flex;
   gap: 15px;
@@ -1045,7 +1032,7 @@ body {
 
 .hero-nav-btn {
   padding: 10px 35px;
-  background: rgba(22, 163, 74, 0.7); /* Зеленый с прозрачностью */
+  background: rgba(22, 163, 74, 0.7);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 25px;
@@ -1061,7 +1048,7 @@ body {
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Поиск в стиле макета */
+
 .hero-search-wrapper {
   width: 100%;
   max-width: 500px;

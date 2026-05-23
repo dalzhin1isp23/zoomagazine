@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Package, Users, Settings, LogOut, ClipboardList, LucideIcon } from 'lucide-react';
+import { Package, Users, LogOut, ClipboardList, LucideIcon } from 'lucide-react';
 import { AdminTab } from './types';
 import ProductsList from './tabs/ProductList';
 import ProductEdit from './tabs/ProductEdit';
 import ProductCreate from './tabs/ProductCreate';
+import AdminUsers from './tabs/AdminUsers';
 import AdminOrders from './tabs/AdminOrders';
 import { useNavigate, useLocation } from 'react-router-dom';
 import "./style/styleAdmin.css";
@@ -23,9 +24,7 @@ const AdminPanel: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
-    if (!token) {
-      navigate('/login');
-    }
+    if (!token) navigate('/login');
   }, [navigate]);
 
   const isEditRoute = location.pathname.includes('/edit');
@@ -55,19 +54,10 @@ const AdminPanel: React.FC = () => {
     if (isCreateRoute) return <ProductCreate />;
     
     switch (activeTab) {
-      case 'dashboard':
-        return (
-          <div className="admin-content">
-            <h3>Дашборд</h3>
-            <p>Статистика и аналитика будут здесь</p>
-          </div>
-        );
-      case 'products':
-        return <ProductsList />;
-      case 'orders':
-        return <AdminOrders />;
-      default:
-        return <ProductsList />;
+      case 'products': return <ProductsList />;
+      case 'orders': return <AdminOrders />;
+      case 'clients': return <AdminUsers />;
+      default: return <ProductsList />;
     }
   };
 
@@ -75,10 +65,10 @@ const AdminPanel: React.FC = () => {
     if (isEditRoute) return 'Редактирование товара';
     if (isCreateRoute) return 'Добавление товара';
     switch (activeTab) {
-      case 'dashboard': return 'Обзор';
       case 'products': return 'Управление товарами';
       case 'orders': return 'Управление заказами';
-      default: return 'Обзор';
+      case 'clients': return 'Управление пользователями';
+      default: return 'Управление товарами';
     }
   };
 
@@ -92,12 +82,6 @@ const AdminPanel: React.FC = () => {
         
         <nav className="admin-nav">
           <NavButton 
-            icon={LayoutDashboard} 
-            label="Дашборд" 
-            isActive={activeTab === 'dashboard' && !isEditRoute && !isCreateRoute} 
-            onClick={() => { setActiveTab('dashboard'); navigate('/admin'); }}
-          />
-          <NavButton 
             icon={Package} 
             label="Товары" 
             isActive={activeTab === 'products' && !isEditRoute && !isCreateRoute} 
@@ -109,8 +93,12 @@ const AdminPanel: React.FC = () => {
             isActive={activeTab === 'orders' && !isEditRoute && !isCreateRoute} 
             onClick={() => { setActiveTab('orders'); navigate('/admin'); }}
           />
-          <NavButton icon={Users} label="Клиенты" isActive={false} />
-          <NavButton icon={Settings} label="Настройки" isActive={false} />
+          <NavButton 
+            icon={Users} 
+            label="Клиенты" 
+            isActive={activeTab === 'clients' && !isEditRoute && !isCreateRoute} 
+            onClick={() => { setActiveTab('clients'); navigate('/admin'); }}
+          />
         </nav>
 
         <NavButton icon={LogOut} label="Выйти" isActive={false} isLogout={true} onClick={handleLogout} />

@@ -1,11 +1,25 @@
-import React, { ChangeEvent, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, User } from 'lucide-react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Search, ShoppingBag, User, X } from 'lucide-react';
 import "./style/Header.css";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => {
+    if (location.pathname === '/catalog') {
+      const params = new URLSearchParams(location.search);
+      const searchParam = params.get('search');
+      if (searchParam) {
+        setSearchValue(searchParam);
+      }
+    } else {
+      setSearchValue('');
+    }
+  }, [location]);
 
   const categoryLinks = [
     { name: 'Корма', path: '/catalog?type=Корма' },
@@ -17,14 +31,37 @@ const Header: React.FC = () => {
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    setSearchValue(value);
+    
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    
     searchTimeoutRef.current = setTimeout(() => {
-      if (value.trim()) {
-        navigate(`/catalog?search=${encodeURIComponent(value)}`);
-      } else {
+      const trimmed = value.trim();
+      if (trimmed.length >= 2) {
+    
+        navigate(`/catalog?search=${encodeURIComponent(trimmed)}`);
+      } else if (trimmed === '' && location.pathname === '/catalog') {
+        
         navigate('/catalog');
       }
-    }, 300);
+    }, 400); 
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = searchValue.trim();
+    if (trimmed.length >= 2) {
+      navigate(`/catalog?search=${encodeURIComponent(trimmed)}`);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
+    if (location.pathname === '/catalog') {
+      const params = new URLSearchParams(location.search);
+      params.delete('search');
+      navigate(`/catalog${params.toString() ? `?${params.toString()}` : ''}`);
+    }
   };
 
   const handleProfileClick = (e: React.MouseEvent) => {
@@ -44,6 +81,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="container header-content">
+
         <div className="logo">
           <div className="logo-icon">O</div>
           <Link to="/" className="logo-text">ГАМА</Link>
@@ -51,26 +89,38 @@ const Header: React.FC = () => {
         
         <nav className="nav">
           {categoryLinks.map(link => (
-            <Link key={link.name} to={link.path}>{link.name}</Link>
+            <Link 
+              key={link.name} 
+              to={link.path}
+              className={location.pathname === '/catalog' && location.search.includes(link.path.split('?')[1]) ? 'active' : ''}
+            >
+              {link.name}
+            </Link>
           ))}
         </nav>
 
         <div className="header-actions">
-          <div className="search-container">
+   
+          <form className="search-container" onSubmit={handleSearchSubmit}>
             <Search className="search-icon" size={18} />
             <input 
               type="text" 
               className="search-input" 
-              placeholder="Поиск..." 
+              placeholder="Поиск товаров..." 
+              value={searchValue}
               onChange={handleSearchChange}
+              aria-label="Поиск товаров"
             />
-          </div>
-          <Link to="/profile" className="header-btn" onClick={handleProfileClick}>
+           
+          </form>
+
+          <Link to="/profile" className="header-btn" onClick={handleProfileClick} title="Профиль">
             <User size={20} />
           </Link>
-          <Link to="/cart" className="header-btn" style={{ position: 'relative' }}>
+
+          <Link to="/cart" className="header-btn" title="Корзина">
             <ShoppingBag size={20} />
-            <span className="cart-badge">2</span>
+          
           </Link>
         </div>
       </div>

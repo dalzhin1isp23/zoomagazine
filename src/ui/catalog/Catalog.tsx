@@ -1,9 +1,9 @@
-import React, { useState, ChangeEvent, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, ChangeEvent, useMemo, useEffect, FormEvent } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
 import ProductCard from '../../entity/ProductCards';
-import { Filter, Grid, List } from 'lucide-react';
+import { Filter, Grid, List, Search } from 'lucide-react'; 
 import { ViewMode, ProductData, SortOption } from '../../function/products/filtration/types';
 import { useProducts } from '../../function/products/useProducts';
 import { useCategories } from '../../function/products/useCategories';
@@ -15,7 +15,8 @@ const Catalog: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchParams, setSearchParams] = useSearchParams();
   const [isUrlSync, setIsUrlSync] = useState(false);
-
+  const [localSearch, setLocalSearch] = useState('');
+  const navigate = useNavigate();
 
   const { favorites, toggleFavorite, isFavorite: checkIsFavorite } = useFavorites();
 
@@ -37,7 +38,7 @@ const Catalog: React.FC = () => {
     reset,
     refetch
   } = useProducts({
-    initialLimit: 9,
+    initialLimit: 12,
     initialSort: initialSort,
     autoFetch: true,
     initialFilters: {
@@ -49,6 +50,10 @@ const Catalog: React.FC = () => {
 
   const { categories: categoryList, isLoading: categoriesLoading } = useCategories();
   const { types: typeList, isLoading: typesLoading } = useTypes();
+
+  useEffect(() => {
+    setLocalSearch(filters.search || '');
+  }, [filters.search]);
 
   useEffect(() => {
     const urlCategory = searchParams.get('category');
@@ -109,21 +114,41 @@ const Catalog: React.FC = () => {
   }, [pagination]);
 
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) =>
-    setFilters({ category: e.target.value || undefined });
+    setFilters({ category: e.target.value || undefined, page: 1 });
 
   const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) =>
-    setFilters({ type: e.target.value || undefined });
+    setFilters({ type: e.target.value || undefined, page: 1 });
 
   const handlePriceChange = (field: 'min' | 'max', value: string) =>
     setFilters({
-      [field === 'min' ? 'minPrice' : 'maxPrice']: value ? Number(value) : undefined
+      [field === 'min' ? 'minPrice' : 'maxPrice']: value ? Number(value) : undefined,
+      page: 1
     });
 
   const handleCheckboxChange = (field: 'inStock' | 'hasDiscount', checked: boolean) =>
-    setFilters({ [field]: checked || undefined });
+    setFilters({ [field]: checked || undefined, page: 1 });
 
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) =>
-    setFilters({ search: e.target.value || undefined });
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+   
+    setLocalSearch(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const trimmed = localSearch.trim();
+
+    if (trimmed.length >= 2) {
+      setFilters({ search: trimmed, page: 1 });
+    } else if (trimmed === '') {
+    
+      setFilters({ search: undefined, page: 1 });
+    }
+  };
+
+  const handleClearSearch = () => {
+    setLocalSearch('');
+    setFilters({ search: undefined, page: 1 });
+  };
 
   const findMatchingValue = (urlValue: string | undefined, list: { name: string }[]) => {
     if (!urlValue || list.length === 0) return urlValue || '';
@@ -137,12 +162,27 @@ const Catalog: React.FC = () => {
       <Header />
       <div className="catalog-page">
         <div className="container">
+         
           <div className="breadcrumbs">
-            <span>Главная</span> / <span>Каталог</span>
+            <span onClick={() => navigate('/')} className="breadcrumb-link">Главная</span> 
+            <span>/</span> 
+            <span>Каталог</span>
+            {filters.search && (
+              <>
+                <span>/</span>
+                <span className="search-breadcrumb">
+                  <Search size={14} />
+                  Поиск: "{filters.search}"
+                </span>
+              </>
+            )}
           </div>
 
           <div className="catalog-header">
-            <h1 className="catalog-title">Каталог товаров</h1>
+            <h1 className="catalog-title">
+              Каталог товаров
+              {filters.search && <span className="search-results-count">({pagination.total} найдено)</span>}
+            </h1>
             <div className="catalog-controls">
               <div className="view-toggle">
                 <button
@@ -163,6 +203,7 @@ const Catalog: React.FC = () => {
             </div>
           </div>
 
+          {/* Ошибка */}
           {error && (
             <div className="error-banner" role="alert">
               {error}
@@ -171,6 +212,7 @@ const Catalog: React.FC = () => {
           )}
 
           <div className="catalog-content">
+      
             <aside className="catalog-sidebar">
               <div className="filter-section">
                 <h3 className="filter-title">
@@ -212,7 +254,7 @@ const Catalog: React.FC = () => {
                 </div>
 
                 <div className="filter-group">
-                  <label className="filter-label">Цена</label>
+                  <label className="filter-label">Цена, ₽</label>
                   <div className="price-range">
                     <input
                       type="number"
@@ -223,7 +265,7 @@ const Catalog: React.FC = () => {
                       disabled={isLoading}
                       min="0"
                     />
-                    <span>—</span>
+                    <span className="price-separator">—</span>
                     <input
                       type="number"
                       placeholder="До"
@@ -237,7 +279,7 @@ const Catalog: React.FC = () => {
                 </div>
 
                 <div className="filter-group">
-                  <label className="filter-label">Наличие</label>
+                  <label className="filter-label">Дополнительно</label>
                   <label className="checkbox-label">
                     <input
                       type="checkbox"
@@ -259,24 +301,44 @@ const Catalog: React.FC = () => {
                 </div>
 
                 <div className="filter-group">
-                  <label className="filter-label">Поиск</label>
-                  <input
-                    type="text"
-                    placeholder="Название товара..."
-                    className="search-input"
-                    value={filters.search || ''}
-                    onChange={handleSearch}
-                    disabled={isLoading}
-                  />
+                  <label className="filter-label">Поиск в каталоге</label>
+                  <form className="search-filter-form" onSubmit={handleSearchSubmit}>
+                    <input
+                      type="text"
+                      placeholder="Введите и нажмите Enter..."
+                      className="search-filter-input"
+                      value={localSearch}
+                      onChange={handleSearchChange}
+                      disabled={isLoading}
+                      onKeyDown={(e) => {
+                  
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleSearchSubmit(e);
+                        }
+                      }}
+                    />
+                
+                  </form>
+                
+                  {localSearch && (
+                    <button 
+                      type="button" 
+                      className="search-reset-link" 
+                      onClick={handleClearSearch}
+                    >
+                      Сбросить поиск
+                    </button>
+                  )}
                 </div>
 
                 <div className="filter-actions">
                   <button
-                    className="filter-apply-btn"
+                    className="search-reset-link"
                     onClick={reset}
                     disabled={isLoading}
                   >
-                    Сбросить
+                    Сбросить все
                   </button>
                   {isLoading && (
                     <span className="loading-indicator">Загрузка...</span>
@@ -286,13 +348,14 @@ const Catalog: React.FC = () => {
             </aside>
 
             <main className="catalog-grid">
+       
               <div className="catalog-results-info">
-                <span>
+                <span className="results-count">
                   {isLoading
                     ? 'Обновление...'
                     : error
                       ? 'Ошибка загрузки'
-                      : `${pagination.total} товаров`
+                      : `${pagination.total} ${pagination.total === 1 ? 'товар' : pagination.total < 5 ? 'товара' : 'товаров'}`
                   }
                 </span>
                 <select
@@ -305,6 +368,7 @@ const Catalog: React.FC = () => {
                   <option value="price-asc">Сначала дешёвые</option>
                   <option value="price-desc">Сначала дорогие</option>
                   <option value="newest">Новинки</option>
+                  <option value="rating">По рейтингу</option>
                 </select>
               </div>
 
@@ -323,7 +387,14 @@ const Catalog: React.FC = () => {
                   ))
                 ) : (
                   <div className="no-results">
+                    <div className="no-results-icon">🔍</div>
                     <p>Товары не найдены</p>
+                    <p className="no-results-hint">
+                      {filters.search 
+                        ? `По запросу "${filters.search}" ничего не найдено`
+                        : 'Попробуйте изменить фильтры'
+                      }
+                    </p>
                     <button onClick={reset} className="reset-filters-btn">
                       Сбросить фильтры
                     </button>

@@ -12,7 +12,7 @@ export interface UseProductReturn {
 export const useProductDetails = (productId: string | undefined): UseProductReturn => {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
 
   const fetchProduct = useCallback(async () => {
     if (!productId) return;
@@ -21,23 +21,17 @@ export const useProductDetails = (productId: string | undefined): UseProductRetu
     setError(null);
 
     try {
-
-      const response = await api.get<{
-        success: boolean;
-        data?: ProductData;
-      }>(`/products/${productId}`);
-
+      const response = await api.get<{ success: boolean; data?: ProductData; message?: string }>(`/products/${productId}`);
       const responseData = response.data;
 
-      if (responseData?.success) {
-    
-        setProduct(responseData.data || null);
+      if (responseData?.success && responseData.data) {
+        setProduct(responseData.data);
       } else {
         throw new Error(responseData?.message || 'Ошибка загрузки товара');
       }
     } catch (err: any) {
       if (err.code === 'ERR_NETWORK' || !err.response) {
-        setError('Не удалось подключиться к серверу. Проверьте, запущен ли бэкенд на порту 3000.');
+        setError('Не удалось подключиться к серверу');
       } else {
         const msg = err.response?.data?.message || err.message || 'Ошибка сети';
         setError(msg);
