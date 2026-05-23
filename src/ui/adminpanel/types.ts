@@ -1,31 +1,20 @@
+export type AdminTab = 'dashboard' | 'products' | 'orders' | 'clients' | 'settings';
+
 export interface AdminProduct {
   _id: string;
   name: string;
   description?: string;
   manufacturer?: string;
   price: number;
-  type?: {
-    _id: string;
-    name: string;
-  };
+  type?: { _id: string; name: string };
   remains?: number;
   discount?: number;
-  images?: Array<{
-    url: string;
-    isMain?: boolean;
-    altText?: string;
-  }>;
-  category?: {
-    _id: string;
-    name: string;
-  };
+  images?: Array<{ url: string; isMain?: boolean; altText?: string }>;
+  category?: { _id: string; name: string };
   status?: string;
   createdAt?: string;
   updatedAt?: string;
 }
-
-
-export type AdminTab = 'dashboard' | 'products' | 'clients' | 'settings';
 
 export interface CartItem {
   product: {
@@ -45,4 +34,16 @@ export interface CartItem {
 export interface CartState {
   items: CartItem[];
   updatedAt: string;
+}
+
+export interface ProductFormData {
+  name: string;
+  description: string;
+  price: number;
+  discount?: number;
+  remains: number;
+  category?: string;
+  type?: string;
+  isVetMedicine?: boolean;
+  images?: Array<{ url: string; isMain?: boolean }>;
 }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Package, Users, Settings, LogOut, Plus, Search, LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Settings, LogOut, ClipboardList, LucideIcon } from 'lucide-react';
 import { AdminTab } from './types';
 import ProductsList from './tabs/ProductList';
 import ProductEdit from './tabs/ProductEdit';
 import ProductCreate from './tabs/ProductCreate';
+import AdminOrders from './tabs/AdminOrders';
 import { useNavigate, useLocation } from 'react-router-dom';
 import "./style/styleAdmin.css";
 
@@ -50,15 +51,10 @@ const AdminPanel: React.FC = () => {
   };
 
   const renderContent = () => {
-    if (isEditRoute) {
-      return <ProductEdit />;
-    }
-    if (isCreateRoute) {
-      return <ProductCreate />;
-    }
+    if (isEditRoute) return <ProductEdit />;
+    if (isCreateRoute) return <ProductCreate />;
+    
     switch (activeTab) {
-      case 'products':
-        return <ProductsList />;
       case 'dashboard':
         return (
           <div className="admin-content">
@@ -66,8 +62,23 @@ const AdminPanel: React.FC = () => {
             <p>Статистика и аналитика будут здесь</p>
           </div>
         );
+      case 'products':
+        return <ProductsList />;
+      case 'orders':
+        return <AdminOrders />;
       default:
         return <ProductsList />;
+    }
+  };
+
+  const getPageTitle = () => {
+    if (isEditRoute) return 'Редактирование товара';
+    if (isCreateRoute) return 'Добавление товара';
+    switch (activeTab) {
+      case 'dashboard': return 'Обзор';
+      case 'products': return 'Управление товарами';
+      case 'orders': return 'Управление заказами';
+      default: return 'Обзор';
     }
   };
 
@@ -92,6 +103,12 @@ const AdminPanel: React.FC = () => {
             isActive={activeTab === 'products' && !isEditRoute && !isCreateRoute} 
             onClick={() => { setActiveTab('products'); navigate('/admin'); }}
           />
+          <NavButton 
+            icon={ClipboardList} 
+            label="Заказы" 
+            isActive={activeTab === 'orders' && !isEditRoute && !isCreateRoute} 
+            onClick={() => { setActiveTab('orders'); navigate('/admin'); }}
+          />
           <NavButton icon={Users} label="Клиенты" isActive={false} />
           <NavButton icon={Settings} label="Настройки" isActive={false} />
         </nav>
@@ -101,14 +118,11 @@ const AdminPanel: React.FC = () => {
 
       <main className="admin-main">
         <header className="admin-header">
-          <h1 className="admin-title">
-            {isEditRoute ? 'Редактирование товара' : isCreateRoute ? 'Добавление товара' : activeTab === 'products' ? 'Управление товарами' : 'Обзор'}
-          </h1>
+          <h1 className="admin-title">{getPageTitle()}</h1>
           <div className="admin-actions">
             <div className="admin-avatar">A</div>
           </div>
         </header>
-
         {renderContent()}
       </main>
     </div>
