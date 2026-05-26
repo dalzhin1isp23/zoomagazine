@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Pencil, Trash2, Heart, X, Plus, Upload } from 'lucide-react';
 import { PetCardData } from './component/petsProfileCard';
 import "../style/pets/petDetail.css";
@@ -24,6 +24,16 @@ export interface PetDetailTabProps {
   onUploadDocument?: (file: File, title: string) => void;
 }
 
+const getRussianPlural = (value: number, forms: [string, string, string]): string => {
+  const n = Math.abs(value) % 100;
+  const n1 = n % 10;
+  
+  if (n > 10 && n < 20) return forms[2];
+  if (n1 > 1 && n1 < 5) return forms[1];
+  if (n1 === 1) return forms[0];
+  return forms[2];
+};
+
 const PetDetailTab: React.FC<PetDetailTabProps> = ({ 
   pet, onBack, onEditField, onDelete, onPhotoChange,
   onAddTag, onRemoveTag, onFolderColorChange, onUploadDocument
@@ -31,6 +41,33 @@ const PetDetailTab: React.FC<PetDetailTabProps> = ({
   const [newTag, setNewTag] = useState('');
   const [docTitle, setDocTitle] = useState('');
   const folderColor = pet.folderColor || '#234cd3';
+
+  const getAgeText = useMemo(() => {
+    if (!pet.bornDate) return 'Не указан';
+    
+    const birth = new Date(pet.bornDate);
+    if (isNaN(birth.getTime())) return 'Не указан';
+    
+    const now = new Date();
+    
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    
+    if (months < 0 || (months === 0 && now.getDate() < birth.getDate())) {
+      years--;
+      months += 12;
+    }
+    
+    if (years > 0) {
+      return `${years} ${getRussianPlural(years, ['год', 'года', 'лет'])}`;
+    }
+    
+    if (months > 0) {
+      return `${months} ${getRussianPlural(months, ['месяц', 'месяца', 'месяцев'])}`;
+    }
+    
+    return 'менее 1 месяца';
+  }, [pet.bornDate]);
 
   const handleAddTag = () => {
     if (newTag.trim()) { onAddTag?.(newTag.trim()); setNewTag(''); }
@@ -43,12 +80,6 @@ const PetDetailTab: React.FC<PetDetailTabProps> = ({
       setDocTitle('');
       e.target.value = '';
     }
-  };
-
-  const getAgeText = () => {
-    if (!pet.bornDate) return 'Не указан';
-    const years = pet.ageYears ?? 0;
-    return `${years} ${years === 1 ? 'год' : years < 5 ? 'года' : 'лет'}`;
   };
 
   const getImageUrl = (url?: string) => {
@@ -127,7 +158,7 @@ const PetDetailTab: React.FC<PetDetailTabProps> = ({
             <div className="info-row"><span className="label">Вид:</span><span className="value">{pet.animal}</span></div>
             <div className="info-row"><span className="label">Пол:</span><span className="value">{pet.gender || '—'}</span></div>
             <div className="edit-field"><span className="label">Порода:</span><div className="view-mode"><span className="value">{pet.breed || 'Не указана'}</span><button className="edit-btn-red inline-edit" onClick={() => onEditField?.('breed')}><Pencil size={14} /></button></div></div>
-            <div className="info-row"><span className="label">Возраст:</span><span className="value">{getAgeText()}</span></div>
+            <div className="info-row"><span className="label">Возраст:</span><span className="value">{getAgeText}</span></div>
           </div>
 
           <div className="section-divider" />

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../entity/Header';
 import Footer from '../../entity/Footer';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, AlertCircle } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, AlertCircle, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../function/profile/useCart';
-import { ShoppingCart } from 'lucide-react';
 import "./style/style.css";
 
 const API_BASE_URL = 'http://127.0.0.1:3000';

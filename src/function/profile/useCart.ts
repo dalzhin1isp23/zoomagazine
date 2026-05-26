@@ -94,7 +94,6 @@ export const useCart = () => {
           price: product.price,
           discount: product.discount,
           remains: product.remains,
-          // ← КРИТИЧНО: добавляем isVetMedicine
           isVetMedicine: product.isVetMedicine,
           images: product.images,
           category: product.category,
@@ -139,6 +138,9 @@ export const useCart = () => {
   }, [saveCart]);
 
   const totals = useCallback(() => {
+    const FREE_DELIVERY_THRESHOLD = 3000;
+    const DELIVERY_COST = 300;
+
     const subtotal = items.reduce((sum, item) => {
       const price = item.product.discount && item.product.discount > 0
         ? Math.round(item.product.price * (1 - item.product.discount / 100))
@@ -147,8 +149,14 @@ export const useCart = () => {
     }, 0);
     
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+    
+    const delivery = subtotal >= FREE_DELIVERY_THRESHOLD || subtotal === 0 
+      ? 0 
+      : DELIVERY_COST;
+    
+    const total = subtotal + delivery;
 
-    return { subtotal, totalItems };
+    return { subtotal, delivery, total, totalItems };
   }, [items]);
 
   const syncStock = useCallback(async () => {

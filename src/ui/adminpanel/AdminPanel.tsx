@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Users, LogOut, ClipboardList, LucideIcon } from 'lucide-react';
+import { Package, Users, LogOut, ClipboardList, TrendingUp, LucideIcon } from 'lucide-react';
 import { AdminTab } from './types';
 import ProductsList from './tabs/ProductList';
 import ProductEdit from './tabs/ProductEdit';
 import ProductCreate from './tabs/ProductCreate';
 import AdminUsers from './tabs/AdminUsers';
 import AdminOrders from './tabs/AdminOrders';
+import AdminDashboard from './tabs/AdminDashboard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import "./style/styleAdmin.css";
 
@@ -20,7 +21,7 @@ interface NavButtonProps {
 const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<AdminTab>('products');
+  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
@@ -54,10 +55,11 @@ const AdminPanel: React.FC = () => {
     if (isCreateRoute) return <ProductCreate />;
     
     switch (activeTab) {
+      case 'dashboard': return <AdminDashboard />;
       case 'products': return <ProductsList />;
       case 'orders': return <AdminOrders />;
       case 'clients': return <AdminUsers />;
-      default: return <ProductsList />;
+      default: return <AdminDashboard />;
     }
   };
 
@@ -65,10 +67,11 @@ const AdminPanel: React.FC = () => {
     if (isEditRoute) return 'Редактирование товара';
     if (isCreateRoute) return 'Добавление товара';
     switch (activeTab) {
+      case 'dashboard': return 'Панель управления';
       case 'products': return 'Управление товарами';
       case 'orders': return 'Управление заказами';
       case 'clients': return 'Управление пользователями';
-      default: return 'Управление товарами';
+      default: return 'Панель управления';
     }
   };
 
@@ -81,6 +84,12 @@ const AdminPanel: React.FC = () => {
         </div>
         
         <nav className="admin-nav">
+          <NavButton 
+            icon={TrendingUp} 
+            label="Дашборд" 
+            isActive={activeTab === 'dashboard' && !isEditRoute && !isCreateRoute} 
+            onClick={() => { setActiveTab('dashboard'); navigate('/admin'); }}
+          />
           <NavButton 
             icon={Package} 
             label="Товары" 

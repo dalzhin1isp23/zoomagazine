@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pencil, User } from 'lucide-react';
 import "../../style/pets/petCard.css";
 
@@ -21,6 +21,16 @@ export interface petProfileCardProps {
   onEdit?: () => void;
 }
 
+const getRussianPlural = (value: number, forms: [string, string, string]): string => {
+  const n = Math.abs(value) % 100;
+  const n1 = n % 10;
+  
+  if (n > 10 && n < 20) return forms[2];
+  if (n1 > 1 && n1 < 5) return forms[1];
+  if (n1 === 1) return forms[0];
+  return forms[2];
+};
+
 const PetFolderCard: React.FC<petProfileCardProps> = ({ 
   pet, 
   onClick = () => {}, 
@@ -28,12 +38,32 @@ const PetFolderCard: React.FC<petProfileCardProps> = ({
 }) => {
   const folderColor = pet.folderColor || '#234cd3';
 
-  const getAgeText = () => {
-    if (pet.ageYears !== undefined && pet.ageYears > 0) {
-      return `${pet.ageYears} ${pet.ageYears === 1 ? 'год' : pet.ageYears < 5 ? 'года' : 'лет'}`;
+  const getAgeText = useMemo(() => {
+    if (!pet.bornDate) return 'Возраст не указан';
+    
+    const birth = new Date(pet.bornDate);
+    if (isNaN(birth.getTime())) return 'Возраст не указан';
+    
+    const now = new Date();
+    
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    
+    if (months < 0 || (months === 0 && now.getDate() < birth.getDate())) {
+      years--;
+      months += 12;
     }
-    return 'Возраст не указан';
-  };
+    
+    if (years > 0) {
+      return `${years} ${getRussianPlural(years, ['год', 'года', 'лет'])}`;
+    }
+    
+    if (months > 0) {
+      return `${months} ${getRussianPlural(months, ['месяц', 'месяца', 'месяцев'])}`;
+    }
+    
+    return 'менее 1 месяца';
+  }, [pet.bornDate]);
 
   const getImageUrl = (url?: string) => {
     if (!url) return '';
@@ -47,13 +77,9 @@ const PetFolderCard: React.FC<petProfileCardProps> = ({
       onClick={onClick}
       style={{ backgroundColor: folderColor } as React.CSSProperties}
     >
-      <div 
-        className="folder-panel" 
-      />
+      <div className="folder-panel" />
       <div className="folder-paper">
-        <div 
-          className="pet-avatar-circle"
-        >
+        <div className="pet-avatar-circle">
           {pet.photoUrl ? (
             <img 
               src={getImageUrl(pet.photoUrl)} 
@@ -72,7 +98,7 @@ const PetFolderCard: React.FC<petProfileCardProps> = ({
         <p className="pet-species">{pet.animal}</p>
         <p className="pet-age">
           {pet.gender && <span>{pet.gender}, </span>}
-          {getAgeText()}
+          {getAgeText}
         </p>
         
         {onEdit && (
